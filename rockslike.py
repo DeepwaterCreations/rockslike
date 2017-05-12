@@ -3,27 +3,30 @@
 import sys
 import curses
 
-def update_world():
-    """Generate the results of a single turn"""
-    pass
+from gameworld import GameWorld
 
-def draw_world():
+def draw_screen(stdscr, gameworld):
     """Display the current game state on the screen"""
-    pass
+    stdscr.addstr(0, 0, gameworld.as_string())
+    stdscr.refresh()
 
 def main(stdscr):
     #SETUP
     curses.curs_set(False) #Turn off the cursor
     stdscr.clear() #Clear the screen
 
+    gameworld = GameWorld(curses.COLS-1, curses.LINES-1)
+
     #GAME LOOP
     while True:
         try:
-            update_world()
-            draw_world()
+            draw_screen(stdscr, gameworld)
+            stdscr.getkey()
+            gameworld.update_world()
         except KeyboardInterrupt:
             #The user pressed Ctrl-C
-            pass
+            stdscr.refresh()
+            sys.exit()
         except SystemExit:
             stdscr.refresh()
             sys.exit()
