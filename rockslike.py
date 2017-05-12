@@ -3,7 +3,12 @@
 import sys
 import curses
 
-def game_loop():
+def update_world():
+    """Generate the results of a single turn"""
+    pass
+
+def draw_world():
+    """Display the current game state on the screen"""
     pass
 
 def main(stdscr):
@@ -12,13 +17,16 @@ def main(stdscr):
     stdscr.clear() #Clear the screen
 
     #GAME LOOP
-    try:
-        game_loop()
-    except KeyboardInterrupt:
-        pass
-    except SystemExit:
-        stdscr.refresh()
-        sys.exit()
+    while True:
+        try:
+            update_world()
+            draw_world()
+        except KeyboardInterrupt:
+            #The user pressed Ctrl-C
+            pass
+        except SystemExit:
+            stdscr.refresh()
+            sys.exit()
 
 if __name__ == "__main__":
     #This will run the main function in a curses scope, and clean up
