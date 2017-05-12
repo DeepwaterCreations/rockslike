@@ -1,7 +1,10 @@
-A project to make a weird roguelike in Python using libtcod (roguecentral.org/doryen/libtcod)
+A project to make a weird roguelike in Python using curses and pygame
+
+Python's curses module: 
+https://docs.python.org/howto/curses.html
+https://docs.python.org/library/curses.html
+
+Pygame:
+https://www.pygame.org
+
 Everyone is welcome to contribute. For the sake of preserving a modicum of sanity, this folder is a git repo, so please use commits. Branches are also welcome.
-
-Instructions for stuff will go here when there is stuff to have instructions for:
-
-
-In the meantime, check out www.roguebasin.com/index.php?title=Complete_Roguelike_Tutorial,_using_python%2Blibtcod for help on how to get started.
