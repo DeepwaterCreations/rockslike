@@ -8,3 +8,9 @@ Pygame:
 https://www.pygame.org
 
 Everyone is welcome to contribute. For the sake of preserving a modicum of sanity, this folder is a git repo, so please use commits. Branches are also welcome.
+A little bit of command-line git:
+`git status` to see the current state of your working directory - red files are changed, green files are staged for commiting
+`git diff` to see the changes you've made since the last commit
+`git add [filenames]` to add files to your commit
+`git add -p [filenames]` to add only parts of files to the commit
+`git commit` to prompt for a commit message and then commit added files
