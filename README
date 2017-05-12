@@ -4,10 +4,23 @@ Python's curses module:
 https://docs.python.org/howto/curses.html
 https://docs.python.org/library/curses.html
 
-Everyone is welcome to contribute. For the sake of preserving a modicum of sanity, this folder is a git repo, so please use commits. Branches are also welcome.
+Everyone is welcome to contribute. For the sake of preserving a modicum of sanity, this folder is a
+git repo, so please use commits. Branches are also welcome.
+
 A little bit of command-line git:
-`git status` to see the current state of your working directory - red files are changed, green files are staged for commiting
-`git diff` to see the changes you've made since the last commit
-`git add [filenames]` to add files to your commit
-`git add -p [filenames]` to add only parts of files to the commit
+`git status` to see the current state of your working directory - red files are changed,
+	green files are staged for commiting
+`git diff` to review the changes you've made since the last commit and make sure they're what you want
+`git add [filenames]` to stage files for your commit
+`git add -p [filenames]` to stage only parts of files (which is a good way to break your commits into
+	atomic pieces if you changed a bunch of stuff without committing)
 `git commit` to prompt for a commit message and then commit added files
+
+And if you want to fork the code, or just work on it in the relative safety of your home folder,
+`git clone /home/Quarry/src/rockslike` (while you're in the parent folder of where you want the clone to go)
+which will allow you to
+`git pull` to get changes from the Quarry version
+`git push` to copy your changes over to the Quarry version
+I recommend you pull often and make small commits to avoid merge headaches.
+
+`git help` and `git help [command]` will tell you more.
