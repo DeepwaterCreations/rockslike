@@ -1,11 +1,8 @@
-A project to make a weird roguelike in Python using curses and pygame
+A project to make a weird roguelike in Python using curses
 
 Python's curses module: 
 https://docs.python.org/howto/curses.html
 https://docs.python.org/library/curses.html
-
-Pygame:
-https://www.pygame.org
 
 Everyone is welcome to contribute. For the sake of preserving a modicum of sanity, this folder is a git repo, so please use commits. Branches are also welcome.
 A little bit of command-line git:
