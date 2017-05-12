@@ -21,8 +21,8 @@ def main(stdscr):
     while True:
         try:
             draw_screen(stdscr, gameworld)
-            stdscr.getkey()
-            gameworld.update_world()
+            key = stdscr.getkey()
+            gameworld.update_world(key)
         except KeyboardInterrupt:
             #The user pressed Ctrl-C
             stdscr.refresh()

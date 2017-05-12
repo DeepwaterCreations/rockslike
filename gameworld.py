@@ -36,8 +36,8 @@ class GameWorld():
         self._world = [[[self.map_features["floor"]] for x in range(self.width)] for y in range(self.height)]
 
         #add player to the map
-        player = Entity('@', self.width//2, self.height//2)
-        self._entities = [player]
+        self._player = Entity('@', self.width//2, self.height//2)
+        self._entities = [self._player]
         
     def _flatten_map(self):
         """Returns a matrix where each cell holds the char of the top game object at that location"""
@@ -53,9 +53,29 @@ class GameWorld():
         """Returns the contents of the tile at x, y"""
         return self._world[y][x]
 
-    def update_world(self):
+    def update_world(self, key):
         """Generate the results of a single turn"""
-        pass
+        #TODO: Break key handling into its own function, or maybe even class
+        if key in ["y", "7"]:
+            self._player.y -= 1
+            self._player.x -= 1
+        if key in ["KEY_UP", "k", "8"]:
+            self._player.y -= 1
+        if key in ["u", "9"]:
+            self._player.y -= 1
+            self._player.x += 1
+        if key in ["KEY_LEFT", "h", "4"]:
+            self._player.x -= 1
+        if key in ["KEY_RIGHT", "l", "6"]:
+            self._player.x += 1
+        if key in ["b", "1"]:
+            self._player.y += 1
+            self._player.x -= 1
+        if key in ["KEY_DOWN", "j", "2"]:
+            self._player.y += 1
+        if key in ["n", "3"]:
+            self._player.y += 1
+            self._player.x += 1
 
     def as_string(self):
         """Return the top-level tile characters for every tile"""
