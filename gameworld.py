@@ -57,25 +57,25 @@ class GameWorld():
         """Generate the results of a single turn"""
         #TODO: Break key handling into its own function, or maybe even class
         if key in ["y", "7"]:
-            self._player.y -= 1
-            self._player.x -= 1
+            self._player.y = max(0, self._player.y - 1)
+            self._player.x = max(0, self._player.x - 1)
         if key in ["KEY_UP", "k", "8"]:
-            self._player.y -= 1
+            self._player.y = max(0, self._player.y - 1)
         if key in ["u", "9"]:
-            self._player.y -= 1
-            self._player.x += 1
+            self._player.y = max(0, self._player.y - 1)
+            self._player.x = min(self.width-1, self._player.x + 1)
         if key in ["KEY_LEFT", "h", "4"]:
-            self._player.x -= 1
+            self._player.x = max(0, self._player.x - 1)
         if key in ["KEY_RIGHT", "l", "6"]:
-            self._player.x += 1
+            self._player.x = min(self.width-1, self._player.x + 1)
         if key in ["b", "1"]:
-            self._player.y += 1
-            self._player.x -= 1
+            self._player.y = min(self.height-1, self._player.y + 1)
+            self._player.x = max(0, self._player.x - 1)
         if key in ["KEY_DOWN", "j", "2"]:
-            self._player.y += 1
+            self._player.y = min(self.height-1, self._player.y + 1)
         if key in ["n", "3"]:
-            self._player.y += 1
-            self._player.x += 1
+            self._player.y = min(self.height-1, self._player.y + 1)
+            self._player.x = min(self.width-1, self._player.x + 1)
 
     def as_string(self):
         """Return the top-level tile characters for every tile"""
