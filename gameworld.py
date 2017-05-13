@@ -1,23 +1,5 @@
-class Tile():
-    """Holds char and color information for some game object's appearance"""
-
-    def __init__(self, char, color):
-        self.char = char
-        self.color = color
-
-class MapFeature():
-    """A static element of the map, such as a floor or wall tile"""
-
-    def __init__(self, tile):
-        self.tile = tile
-
-class Entity():
-    """A dynamic object on the map, such as a player or monster"""
-
-    def __init__(self, tile, x, y):
-        self.tile = tile
-        self.x = x
-        self.y = y
+import entities
+import mapfeatures
 
 class GameWorld():
     """A class to hold the current state of the game world"""
@@ -25,22 +7,17 @@ class GameWorld():
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.map_features = {
-                "empty": MapFeature(Tile(' ', None)),
-                "floor": MapFeature(Tile('.', None)),
-                "wall": MapFeature(Tile('#', None))
-                }
         #World is represented by a 2d matrix of lists
         #Each coordinate in the matrix is a cell
         #The list for that cell holds game objects
         #that are located in that cell.
-        self._world = [[[self.map_features["floor"]] for x in range(self.width)] for y in range(self.height)]
+        self._world = [[[mapfeatures.Floor()] for x in range(self.width)] for y in range(self.height)]
 
         #add player to the map
-        self._player = Entity(Tile('@', None), self.width//2, self.height//2)
+        self._player = entities.Player(self.width//2, self.height//2)
         self._entities = [self._player]
         
-    def _flatten_map(self):
+    def flatten_map(self):
         """Returns a matrix where each cell holds the tile of the top game object at that location"""
         flattened = [['' for x in range(self.width)] for y in range(self.height)]
         for y, row in enumerate(self._world):
@@ -77,17 +54,3 @@ class GameWorld():
         if key in ["n", "3"]:
             self._player.y = min(self.height-1, self._player.y + 1)
             self._player.x = min(self.width-1, self._player.x + 1)
-
-    def as_string(self):
-        """Return the top-level tile characters for every cell"""
-        #TODO: This won't really work if we want colors.
-        worldstring = ""
-        flattened = self._flatten_map()
-        for row in flattened:
-            rowstring = ""
-            for tile in row:
-                rowstring += tile.char
-            worldstring += rowstring
-            worldstring += '\n'
-        return worldstring
-

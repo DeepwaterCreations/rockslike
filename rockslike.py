@@ -7,7 +7,9 @@ from gameworld import GameWorld
 
 def draw_screen(stdscr, gameworld):
     """Display the current game state on the screen"""
-    stdscr.addstr(0, 0, gameworld.as_string())
+    for y, row in enumerate(gameworld.flatten_map()):
+        for x, tile in enumerate(row):
+            stdscr.addstr(y, x, tile.char, tile.color)
     stdscr.refresh()
 
 def main(stdscr):
