@@ -7,6 +7,7 @@ https://docs.python.org/library/curses.html
 Everyone is welcome to contribute. For the sake of preserving a modicum of sanity, this folder is a
 git repo, so please use commits. Branches are also welcome.
 
+
 A little bit of command-line git:
 `git status` to see the current state of your working directory - red files are changed,
 	green files are staged for commiting
