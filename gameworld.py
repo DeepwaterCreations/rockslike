@@ -30,6 +30,8 @@ class GameWorld():
 
     def get(self, x, y):
         """Returns the contents of the cell at x, y"""
+        if (x < 0 or x > self.width-1) or (y < 0 or y > self.height-1):
+            return [mapfeatures.Void()]
         return self._world[y][x]
 
     def update_world(self, key):

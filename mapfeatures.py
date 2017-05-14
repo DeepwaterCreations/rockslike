@@ -29,3 +29,12 @@ class Wall(MapFeature):
     def __init__(self):
         tile = Tile('#', foreground=curses.COLOR_MAGENTA, background=curses.COLOR_BLACK)
         super(Wall, self).__init__(tile)
+
+class Void(MapFeature):
+    """The un-tile. Represents the boundaries of the world map"""
+
+    def __init__(self):
+        super(Void, self).__init__(None)
+
+    def player_collision(self, player):
+        return False #Stop the player from falling off the edge of the world
