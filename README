@@ -26,3 +26,13 @@ which will allow you to
 I recommend you pull often and make small commits to avoid merge headaches.
 
 `git help` and `git help [command]` will tell you more.
+
+STRUCTURE:
+rockslike.py: Execution starts here. Contains curses setup and the main game loop
+gameworld.py: Holds the state of the game world
+keyinput.py: Handles keyboard input
+events.py: Handles observer-pattern event listening
+mapfeatures.py: Holds static game elements, like walls and floors
+entities.py: Holds dynamic game elements, like the player
+tile.py: Deals with the visual appearance of things: ASCII characters and curses colors
+debugoutput.py: Offers a way to print debug messages into curses
