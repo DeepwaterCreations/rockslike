@@ -27,7 +27,10 @@ def main(stdscr):
     show_debug_text = True
     debugoutput.init(stdscr)
 
-    map_filename = sys.argv[1]
+    if len(sys.argv > 1):
+        map_filename = sys.argv[1]
+    else:
+        map_filename = "/home/Quarry/src/rockslike/maps/testmap.map"
     with open(map_filename) as map_file:
         gamemap = parsemap.parse_map_features(map_file)
 
