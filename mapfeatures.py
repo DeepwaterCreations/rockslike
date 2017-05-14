@@ -24,11 +24,13 @@ class Floor(MapFeature):
 
 class Wall(MapFeature):
     """A tile that blocks the player's movement"""
-    #TODO: Block the player's movement
 
     def __init__(self):
         tile = Tile('#', foreground=curses.COLOR_MAGENTA, background=curses.COLOR_BLACK)
         super(Wall, self).__init__(tile)
+
+    def player_collision(self, player):
+        return False #Stop the player from falling off the edge of the world
 
 class Void(MapFeature):
     """The un-tile. Represents the boundaries of the world map"""
