@@ -8,7 +8,10 @@ from gameworld import GameWorld
 
 def draw_screen(stdscr, gameworld, show_debug_text=False):
     """Display the current game state on the screen"""
-    for y, row in enumerate(gameworld.flatten_map()):
+    view_width = curses.COLS-1
+    view_height = curses.LINES-1
+    view = gameworld.get_view(view_width=view_width, view_height=view_height, center_on_player=True)
+    for y, row in enumerate(view):
         for x, tile in enumerate(row):
             stdscr.addstr(y, x, tile.char, tile.color)
     if show_debug_text:
