@@ -5,8 +5,8 @@ Python's curses module:
 https://docs.python.org/howto/curses.html
 https://docs.python.org/library/curses.html
 
-Everyone is welcome to contribute. For the sake of preserving a modicum of sanity, this folder is a
-git repo, so please use commits. Branches are also welcome.
+Everyone is welcome to contribute - a design goal is to make adding new features and designing maps relatively easy and straightforward. 
+For the sake of preserving a modicum of sanity, this folder is a git repo, so please use commits. Branches are also welcome.
 
 
 A little bit of command-line git:
@@ -26,6 +26,7 @@ which will allow you to
 I recommend you pull often and make small commits to avoid merge headaches.
 
 `git help` and `git help [command]` will tell you more.
+
 
 STRUCTURE:
 rockslike.py: Execution starts here. Contains curses setup and the main game loop
