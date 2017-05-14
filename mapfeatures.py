@@ -8,6 +8,13 @@ class MapFeature():
     def __init__(self, tile):
         self.tile = tile
 
+    def player_collision(self, player):
+        """Called when the player attempts to enter the same cell as this entity
+
+        Return whether the player should complete the move or not.
+        """
+        return True
+
 class Floor(MapFeature):
     """A tile the player can walk on"""
 

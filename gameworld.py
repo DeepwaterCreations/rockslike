@@ -15,7 +15,7 @@ class GameWorld():
         self._world = [[[mapfeatures.Floor()] for x in range(self.width)] for y in range(self.height)]
 
         #add player to the map
-        self._player = entities.Player(self.width//2, self.height//2, self.width, self.height)
+        self._player = entities.Player(self.width//2, self.height//2, self.get)
         self._entities = [self._player]
         
     def flatten_map(self):
