@@ -14,7 +14,7 @@ def listen_to_event(eventname, callback):
     """
     __event_listeners[eventname].append(callback)
 
-def trigger_event(eventname):
+def trigger_event(eventname, *args, **kwargs):
     """Call all the registered callbacks that are listening to eventname"""
     for callback in __event_listeners[eventname]:
-        callback()
+        callback(*args, **kwargs)
