@@ -3,18 +3,18 @@ import events
 
 def handle_key(key):
     if key in ["y", "7"]:
-        events.trigger_event("player_move_nw")
+        events.trigger_event("player_move", x_dir=-1, y_dir=-1)
     if key in ["KEY_UP", "k", "8"]:
-        events.trigger_event("player_move_n")
+        events.trigger_event("player_move", x_dir=0, y_dir=-1)
     if key in ["u", "9"]:
-        events.trigger_event("player_move_ne")
+        events.trigger_event("player_move", x_dir=1, y_dir=-1)
     if key in ["KEY_LEFT", "h", "4"]:
-        events.trigger_event("player_move_w")
+        events.trigger_event("player_move", x_dir=-1, y_dir=0)
     if key in ["KEY_RIGHT", "l", "6"]:
-        events.trigger_event("player_move_e")
+        events.trigger_event("player_move", x_dir=+1, y_dir=0)
     if key in ["b", "1"]:
-        events.trigger_event("player_move_sw")
+        events.trigger_event("player_move", x_dir=-1, y_dir=1)
     if key in ["KEY_DOWN", "j", "2"]:
-        events.trigger_event("player_move_s")
+        events.trigger_event("player_move", x_dir=0, y_dir=1)
     if key in ["n", "3"]:
-        events.trigger_event("player_move_se")
+        events.trigger_event("player_move", x_dir=1, y_dir=1)
