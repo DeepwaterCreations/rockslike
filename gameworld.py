@@ -1,5 +1,6 @@
 import entities
 import mapfeatures
+import keyinput
 
 class GameWorld():
     """A class to hold the current state of the game world"""
@@ -14,7 +15,7 @@ class GameWorld():
         self._world = [[[mapfeatures.Floor()] for x in range(self.width)] for y in range(self.height)]
 
         #add player to the map
-        self._player = entities.Player(self.width//2, self.height//2)
+        self._player = entities.Player(self.width//2, self.height//2, self.width, self.height)
         self._entities = [self._player]
         
     def flatten_map(self):
@@ -33,24 +34,4 @@ class GameWorld():
 
     def update_world(self, key):
         """Generate the results of a single turn"""
-        #TODO: Break key handling into its own function, or maybe even class
-        if key in ["y", "7"]:
-            self._player.y = max(0, self._player.y - 1)
-            self._player.x = max(0, self._player.x - 1)
-        if key in ["KEY_UP", "k", "8"]:
-            self._player.y = max(0, self._player.y - 1)
-        if key in ["u", "9"]:
-            self._player.y = max(0, self._player.y - 1)
-            self._player.x = min(self.width-1, self._player.x + 1)
-        if key in ["KEY_LEFT", "h", "4"]:
-            self._player.x = max(0, self._player.x - 1)
-        if key in ["KEY_RIGHT", "l", "6"]:
-            self._player.x = min(self.width-1, self._player.x + 1)
-        if key in ["b", "1"]:
-            self._player.y = min(self.height-1, self._player.y + 1)
-            self._player.x = max(0, self._player.x - 1)
-        if key in ["KEY_DOWN", "j", "2"]:
-            self._player.y = min(self.height-1, self._player.y + 1)
-        if key in ["n", "3"]:
-            self._player.y = min(self.height-1, self._player.y + 1)
-            self._player.x = min(self.width-1, self._player.x + 1)
+        keyinput.handle_key(key)
