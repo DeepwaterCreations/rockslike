@@ -3,6 +3,7 @@
 import sys
 import curses
 
+import parsemap
 import debugoutput
 from gameworld import GameWorld
 
@@ -20,13 +21,17 @@ def draw_screen(stdscr, gameworld, show_debug_text=False):
 
 def main(stdscr):
     #SETUP
-    show_debug_text = True
-    debugoutput.init(stdscr)
-
     curses.curs_set(False) #Turn off the cursor
     stdscr.clear() #Clear the screen
 
-    gameworld = GameWorld(curses.COLS-1, curses.LINES-1)
+    show_debug_text = True
+    debugoutput.init(stdscr)
+
+    map_filename = sys.argv[1]
+    with open(map_filename) as map_file:
+        gamemap = parsemap.parse_map_features(map_file)
+
+    gameworld = GameWorld(gamemap)
 
     #GAME LOOP
     while True:

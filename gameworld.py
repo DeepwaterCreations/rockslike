@@ -5,14 +5,14 @@ import keyinput
 class GameWorld():
     """A class to hold the current state of the game world"""
 
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
+    def __init__(self, gamemap):
+        self.width = len(gamemap[0])
+        self.height = len(gamemap)
         #World is represented by a 2d matrix of lists
         #Each coordinate in the matrix is a cell
         #The list for that cell holds game objects
         #that are located in that cell.
-        self._world = [[[mapfeatures.Floor()] for x in range(self.width)] for y in range(self.height)]
+        self._world = gamemap
 
         #add player to the map
         self._player = entities.Player(self.width//2, self.height//2, self.get)
