@@ -1,6 +1,4 @@
 """A module for generating map files from text input"""
-import collections
-
 import mapfeatures
 
 __map_dict = {
