@@ -30,7 +30,7 @@ def main(stdscr):
     debugoutput.init(stdscr)
 
     map_file = args.mapfile
-    gamemap = parsemap.parse_map_features(map_file)
+    gamemap = parsemap.parse_file(map_file)
 
     gameworld = GameWorld(gamemap)
 
