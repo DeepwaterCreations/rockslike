@@ -2,6 +2,7 @@
 
 import sys
 import curses
+import argparse
 
 import parsemap
 import debugoutput
@@ -21,18 +22,15 @@ def draw_screen(stdscr, gameworld, show_debug_text=False):
 
 def main(stdscr):
     #SETUP
+    args = get_args()
     curses.curs_set(False) #Turn off the cursor
     stdscr.clear() #Clear the screen
 
-    show_debug_text = True
+    show_debug_text = args.debugging_output
     debugoutput.init(stdscr)
 
-    if len(sys.argv) > 1:
-        map_filename = sys.argv[1]
-    else:
-        map_filename = "/home/Quarry/src/rockslike/maps/testmap.map"
-    with open(map_filename) as map_file:
-        gamemap = parsemap.parse_map_features(map_file)
+    map_file = args.mapfile
+    gamemap = parsemap.parse_map_features(map_file)
 
     gameworld = GameWorld(gamemap)
 
@@ -50,7 +48,30 @@ def main(stdscr):
             stdscr.refresh()
             sys.exit()
 
+def get_args():
+    """Parse the command line arguments and return a dictionary"""
+    parser = argparse.ArgumentParser(description="""
+        A curses-based roguelike something-or-other
+
+        Movement:
+        7 8 9      y k u
+         \|/        \|/
+        4-@-6  or  h-@-l
+         /|\        /|\\
+        1 2 3      b j n
+
+        Maps to try are in the maps/ subfolder, or make your own.
+            """, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("mapfile",
+            help="Path to a text file describing a game map",
+            type=argparse.FileType('r'))
+    parser.add_argument("-D", "--debugging-output", help="Print debugging messages", action="store_true")
+    return parser.parse_args()
+
 if __name__ == "__main__":
+    #Parse the command line arguments before curses so that the help message can show
+    get_args()
+
     #This will run the main function in a curses scope, and clean up
     #the terminal mode when the program ends.
     curses.wrapper(main)
