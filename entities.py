@@ -14,6 +14,8 @@ class Entity():
         self.y = y
         self.get_gameworld_cell = get_gameworld_cell
 
+        self.inventory = []
+
     def player_collision(self, player):
         """Called when the player attempts to enter the same cell as this entity
 
@@ -70,22 +72,25 @@ class Player(Entity):
 
     def receive_item(self, item):
         """Add item to the player's inventory"""
+        self.inventory.append(item)
         debugoutput.add_debug_string("Player received {0}".format(item))
 
 class ItemPickup(Entity):
     """An item's presence in the world
 
-    When the player walks over it, they pick it up, which puts the attached Item
+    When the player walks over it, they pick it up, which puts its inventory items
     in their inventory and destroys this object.
     """
 
-    def __init__(self, item, *args, **kwargs):
+    def __init__(self, items, *args, **kwargs):
         tile = Tile('%', foreground=curses.COLOR_YELLOW, background=curses.COLOR_BLACK)
         super(ItemPickup, self).__init__(tile, *args, **kwargs)
-        self.item = item
+
+        self.inventory.extend(items)
 
     def player_collision(self, player):
-        """On player collision, the player gets the contained item"""
-        player.receive_item(self.item)
+        """On player collision, the player gets the contained items"""
+        for item in self.inventory:
+            player.receive_item(item)
         self.die()
         return True
