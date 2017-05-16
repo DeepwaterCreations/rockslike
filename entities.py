@@ -7,10 +7,11 @@ from tile import Tile
 class Entity():
     """A dynamic object on the map, such as a player or monster"""
 
-    def __init__(self, tile, x, y):
+    def __init__(self, tile, x, y, get_gameworld_cell):
         self.tile = tile
         self.x = x
         self.y = y
+        self.get_gameworld_cell = get_gameworld_cell
 
     def player_collision(self, player):
         """Called when the player attempts to enter the same cell as this entity
@@ -24,8 +25,7 @@ class Player(Entity):
 
     def __init__(self, x, y, get_gameworld_cell):
         tile = Tile('@', foreground=curses.COLOR_WHITE, background=curses.COLOR_CYAN)
-        super(Player, self).__init__(tile, x, y)
-        self.get_gameworld_cell = get_gameworld_cell
+        super(Player, self).__init__(tile, x, y, get_gameworld_cell)
 
         #A flag that might temporarily be set to false during the move step if something
         #prevents the player from moving
