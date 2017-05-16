@@ -1,3 +1,4 @@
+import parsemap
 import entities
 import mapfeatures
 import keyinput
@@ -5,18 +6,19 @@ import keyinput
 class GameWorld():
     """A class to hold the current state of the game world"""
 
-    def __init__(self, gamemap):
-        self.width = len(gamemap[0])
-        self.height = len(gamemap)
+    def __init__(self, mapfile):
         #World is represented by a 2d matrix of lists
         #Each coordinate in the matrix is a cell
         #The list for that cell holds game objects
         #that are located in that cell.
-        self._world = gamemap
+        self._world, entities_partials = parsemap.parse_file(mapfile)
 
-        #add player to the map
-        self._player = entities.Player(self.width//2, self.height//2, self.get)
-        self._entities = [self._player]
+        self.width = len(self._world[0])
+        self.height = len(self._world)
+
+        #Entities are game objects that can see the map and that might move around.
+        self._entities = [partial(get_gameworld_cell=self.get) for partial in entities_partials]
+        self._player = list(filter(lambda x: isinstance(x, entities.Player), self._entities))[0]
 
     def get_view(self, view_width=None, view_height=None, origin=(None, None), center_on_player=False):
         """Returns a 2d matrix of the top tiles of a subset of the board"""

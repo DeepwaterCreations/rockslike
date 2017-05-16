@@ -4,7 +4,6 @@ import sys
 import curses
 import argparse
 
-import parsemap
 import debugoutput
 from gameworld import GameWorld
 
@@ -29,10 +28,7 @@ def main(stdscr):
     show_debug_text = args.debugging_output
     debugoutput.init(stdscr)
 
-    map_file = args.mapfile
-    gamemap = parsemap.parse_file(map_file)
-
-    gameworld = GameWorld(gamemap)
+    gameworld = GameWorld(args.mapfile)
 
     #GAME LOOP
     while True:
