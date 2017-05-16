@@ -2,6 +2,7 @@
 import curses
 
 import events
+import debugoutput
 from tile import Tile
 
 class Entity():
@@ -66,3 +67,25 @@ class Player(Entity):
         Triggered by the 'player_should_stop' event.
         """
         self.should_move = False
+
+    def receive_item(self, item):
+        """Add item to the player's inventory"""
+        debugoutput.add_debug_string("Player received {0}".format(item))
+
+class ItemPickup(Entity):
+    """An item's presence in the world
+
+    When the player walks over it, they pick it up, which puts the attached Item
+    in their inventory and destroys this object.
+    """
+
+    def __init__(self, item, *args, **kwargs):
+        tile = Tile('%', foreground=curses.COLOR_YELLOW, background=curses.COLOR_BLACK)
+        super(ItemPickup, self).__init__(tile, *args, **kwargs)
+        self.item = item
+
+    def player_collision(self, player):
+        """On player collision, the player gets the contained item"""
+        player.receive_item(self.item)
+        self.die()
+        return True
