@@ -2,6 +2,7 @@ import parsemap
 import entities
 import mapfeatures
 import keyinput
+import events
 
 class GameWorld():
     """A class to hold the current state of the game world"""
@@ -19,6 +20,9 @@ class GameWorld():
         #Entities are game objects that can see the map and that might move around.
         self._entities = [partial(get_gameworld_cell=self.get) for partial in entities_partials]
         self._player = list(filter(lambda x: isinstance(x, entities.Player), self._entities))[0]
+
+        #Listen for entity death and remove entity when it happens
+        events.listen_to_event("on_entity_death", lambda e: self._entities.remove(e))
 
     def get_view(self, view_width=None, view_height=None, origin=(None, None), center_on_player=False):
         """Returns a 2d matrix of the top tiles of a subset of the board"""

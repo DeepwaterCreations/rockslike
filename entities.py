@@ -20,6 +20,10 @@ class Entity():
         """
         return True
 
+    def die(self):
+        """Remove this entity from the world"""
+        events.trigger_event("on_entity_death", self)
+
 class Player(Entity):
     """A player character"""
 
