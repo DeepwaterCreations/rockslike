@@ -18,16 +18,16 @@ class MapFeature():
 class Floor(MapFeature):
     """A tile the player can walk on"""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         tile = Tile('.', foreground=curses.COLOR_GREEN, background=curses.COLOR_BLACK)
-        super(Floor, self).__init__(tile)
+        super(Floor, self).__init__(tile, *args, **kwargs)
 
 class Wall(MapFeature):
     """A tile that blocks the player's movement"""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         tile = Tile('#', foreground=curses.COLOR_MAGENTA, background=curses.COLOR_BLACK)
-        super(Wall, self).__init__(tile)
+        super(Wall, self).__init__(tile, *args, **kwargs)
 
     def player_collision(self, player):
         return False #Stop the player from falling off the edge of the world
@@ -35,8 +35,8 @@ class Wall(MapFeature):
 class Void(MapFeature):
     """The un-tile. Represents the boundaries of the world map"""
 
-    def __init__(self):
-        super(Void, self).__init__(None)
+    def __init__(self, *args, **kwargs):
+        super(Void, self).__init__(None, *args, **kwargs)
 
     def player_collision(self, player):
         return False #Stop the player from falling off the edge of the world

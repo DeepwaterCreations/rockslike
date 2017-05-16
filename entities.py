@@ -23,9 +23,9 @@ class Entity():
 class Player(Entity):
     """A player character"""
 
-    def __init__(self, x, y, get_gameworld_cell):
+    def __init__(self, *args, **kwargs):
         tile = Tile('@', foreground=curses.COLOR_WHITE, background=curses.COLOR_CYAN)
-        super(Player, self).__init__(tile, x, y, get_gameworld_cell)
+        super(Player, self).__init__(tile, *args, **kwargs)
 
         #A flag that might temporarily be set to false during the move step if something
         #prevents the player from moving
