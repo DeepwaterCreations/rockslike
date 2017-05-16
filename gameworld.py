@@ -68,7 +68,8 @@ class GameWorld():
         """Returns the contents of the cell at x, y"""
         if (x < 0 or x > self.width-1) or (y < 0 or y > self.height-1):
             return [mapfeatures.Void()]
-        return self._world[y][x]
+        cell_entities = list(filter(lambda e: e.x == x and e.y == y, self._entities))
+        return self._world[y][x] + cell_entities
 
     def update_world(self, key):
         """Generate the results of a single turn"""
