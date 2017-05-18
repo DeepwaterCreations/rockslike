@@ -5,6 +5,7 @@ import curses
 import argparse
 
 import debugoutput
+import keyinput
 from gameworld import GameWorld
 
 def draw_screen(stdscr, gameworld, show_debug_text=False):
@@ -34,8 +35,8 @@ def main(stdscr):
     while True:
         try:
             draw_screen(stdscr, gameworld, show_debug_text=show_debug_text)
-            key = stdscr.getkey()
-            gameworld.update_world(key)
+            keyinput.handle_key(stdscr.getkey())
+            gameworld.update_world()
         except KeyboardInterrupt:
             #The user pressed Ctrl-C
             stdscr.refresh()

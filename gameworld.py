@@ -71,6 +71,6 @@ class GameWorld():
         cell_entities = list(filter(lambda e: e.x == x and e.y == y, self._entities))
         return self._world[y][x] + cell_entities
 
-    def update_world(self, key):
+    def update_world(self):
         """Generate the results of a single turn"""
-        keyinput.handle_key(key)
+        pass
