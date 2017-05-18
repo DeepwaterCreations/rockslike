@@ -38,5 +38,6 @@ entities.py: Holds dynamic game elements, like the player
 tile.py: Deals with the visual appearance of things: ASCII characters and curses colors
 debugoutput.py: Offers a way to print debug messages into curses
 parsemap.py: Reads maps defined in text files
+messagewindow.py: Displays in-game messages to the player
 
 maps/: You can put maps here if you want to
