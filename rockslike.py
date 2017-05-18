@@ -7,9 +7,11 @@ import argparse
 import debugoutput
 import keyinput
 from gameworld import GameWorld
+from messagewindow import MessageWindow
 
-def draw_screen(stdscr, gameworld, show_debug_text=False):
+def draw_screen(stdscr, gameworld, messagewindow, show_debug_text=False):
     """Display the current game state on the screen"""
+    messagewindow.display_messages()
     view_width = curses.COLS-1
     view_height = curses.LINES-1
     view = gameworld.get_view(view_width=view_width, view_height=view_height, center_on_player=True)
@@ -29,12 +31,13 @@ def main(stdscr):
     show_debug_text = args.debugging_output
     debugoutput.init(stdscr)
 
+    messagewindow = MessageWindow(stdscr.subwin(3, curses.COLS-1, 0, 0))
     gameworld = GameWorld(args.mapfile)
 
     #GAME LOOP
     while True:
         try:
-            draw_screen(stdscr, gameworld, show_debug_text=show_debug_text)
+            draw_screen(stdscr, gameworld, messagewindow, show_debug_text=show_debug_text)
             keyinput.handle_key(stdscr.getkey())
             gameworld.update_world()
         except KeyboardInterrupt:

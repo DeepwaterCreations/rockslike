@@ -2,7 +2,6 @@
 import curses
 
 import events
-import debugoutput
 from tile import Tile
 
 class Entity():
@@ -73,7 +72,7 @@ class Player(Entity):
     def receive_item(self, item):
         """Add item to the player's inventory"""
         self.inventory.append(item)
-        debugoutput.add_debug_string("Player received {0}".format(item))
+        events.trigger_event("print_message", "Picked up {0}".format(item))
 
 class ItemPickup(Entity):
     """An item's presence in the world
