@@ -39,6 +39,7 @@ class Player(Entity):
 
         events.listen_to_event("player_move", self.move)
         events.listen_to_event("player_should_stop", self.cancel_move)
+        events.listen_to_event("player_display_inventory", self.display_inventory)
 
     def move(self, x_dir, y_dir):
         """Check the map and move the player in the given direction
@@ -73,6 +74,16 @@ class Player(Entity):
         """Add item to the player's inventory"""
         self.inventory.append(item)
         events.trigger_event("print_message", "Picked up {0}".format(item))
+
+    def display_inventory(self):
+        """Display a message listing the player's inventory"""
+        inventory_string = "Carrying:\n"
+        for item in self.inventory:
+            inventory_string += item + '\n'
+        if len(self.inventory) == 0:
+            inventory_string += "Nothing at all!"
+        events.trigger_event("print_message", inventory_string)
+        
 
 class ItemPickup(Entity):
     """An item's presence in the world
