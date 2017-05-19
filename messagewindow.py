@@ -69,10 +69,6 @@ class MessageWindow():
         if len(message) > 0:
             message.reverse()
             remaining_text = " ".join(message)
-            # debugoutput.add_debug_string("Message: {0}".format(message))
-            # debugoutput.flush_debug_text()
-            # self.window.getkey()
-            # self.add_message(remaining_text)
             self._message_queue.appendleft(remaining_text)
 
         #Put a "==MORE==" message at the bottom of the window if there are more messages
