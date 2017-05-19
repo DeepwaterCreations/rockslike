@@ -41,7 +41,7 @@ class MessageWindow():
 
         #Turn the message into an array of words, and reverse it so that
         #we can consume from the end
-        message = message.split()
+        message = message.split(' ')
         message.reverse()
 
         #Build a queue full of rows, where each row is a part of the message
@@ -53,8 +53,15 @@ class MessageWindow():
             while len(message) > 0:
                 #Put words into the current row's string
                 #Break if putting another word in would overflow the width
+                #Also break on a newline
                 if len(new_row) + 1 + len(message[-1]) < width:
-                    new_row += " " + message.pop()
+                    word = message.pop()
+                    words = word.split('\n', 1)
+                    new_row += " " + words[0]
+                    if len(words) > 1:
+                        for word in words[1:]:
+                            message.append(word)
+                        break
                 elif new_row == "":
                     #Rather than choke forever on a string too long to print but too stubborn to die,
                     #if we haven't added any words at all this iteration, break the first word into 
