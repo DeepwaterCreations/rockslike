@@ -25,6 +25,7 @@ class MessageWindow():
         """
         #Can't use the 'for in' syntax, since we want to pop
         while len(self._message_queue) > 0:
+            self.window.border()
             message = self._message_queue.popleft()
             self._display(message)
             self.window.getkey()
@@ -33,6 +34,9 @@ class MessageWindow():
     ## PRIVATE METHODS ##
     def _display(self, message):
         height, width = self.window.getmaxyx()
+        #Account for border
+        width -= 2
+        height -= 2
 
         #Turn the message into an array of words, and reverse it so that
         #we can consume from the end
@@ -76,7 +80,7 @@ class MessageWindow():
             message_rows.append(self.more_messages_string.center(width-1))
 
         #Print all the rows
-        y = 0
+        y = 1 #Start at 1 to make room for the border
         while len(message_rows) > 0:
-            self.window.addstr(y, 0, message_rows.popleft())
+            self.window.addstr(y, 1, message_rows.popleft())
             y += 1
