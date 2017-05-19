@@ -9,18 +9,37 @@ import keyinput
 from gameworld import GameWorld
 from messagewindow import MessageWindow
 
-def draw_screen(stdscr, gameworld, messagewindow, show_debug_text=False):
+def draw_screen(stdscr, gameworld, gamewindow, messagewindow, show_debug_text=False):
     """Display the current game state on the screen"""
+
+    #Print messages in the message window, if any
     messagewindow.display_messages()
-    view_width = curses.COLS-1
-    view_height = curses.LINES-1
-    view = gameworld.get_view(view_width=view_width, view_height=view_height, center_on_player=True)
+
+    #Draw the gameworld to its window
+    window_height, window_width = gamewindow.getmaxyx()
+    view = gameworld.get_view(view_width=window_width, view_height=window_height, center_on_player=True)
     for y, row in enumerate(view):
         for x, tile in enumerate(row):
-            stdscr.addstr(y, x, tile.char, tile.color)
+            gamewindow.addstr(y, x, tile.char, tile.color)
+    gamewindow.refresh()
+
+    #Flush debug text
     if show_debug_text:
         debugoutput.flush_debug_text()
-    stdscr.refresh()
+
+def layout_windows(stdscr):
+    """Build window layout and create sub-windows of stdscr
+
+    Return: A tuple of curses windows or game objects that manage them
+    """
+    screen_width = curses.COLS-1
+    screen_height = curses.LINES-1
+    messagewindow_height = 5
+    #Arguments for creating sub-windows are height, width, y coord of top, x coord of left
+    #0,0 is top left corner of the screen
+    messagewindow = MessageWindow(stdscr.subwin(messagewindow_height, screen_width, 0, 0))
+    gamewindow = stdscr.subwin(screen_height-messagewindow_height, screen_width, messagewindow_height+1, 0)
+    return (messagewindow, gamewindow)
 
 def main(stdscr):
     #SETUP
@@ -31,13 +50,13 @@ def main(stdscr):
     show_debug_text = args.debugging_output
     debugoutput.init(stdscr)
 
-    messagewindow = MessageWindow(stdscr.subwin(3, curses.COLS-1, 0, 0))
+    messagewindow, gamewindow = layout_windows(stdscr)
     gameworld = GameWorld(args.mapfile)
 
     #GAME LOOP
     while True:
         try:
-            draw_screen(stdscr, gameworld, messagewindow, show_debug_text=show_debug_text)
+            draw_screen(stdscr, gameworld, gamewindow, messagewindow, show_debug_text=show_debug_text)
             keyinput.handle_key(stdscr.getkey())
             gameworld.update_world()
         except KeyboardInterrupt:
