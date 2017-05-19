@@ -30,6 +30,7 @@ class MessageWindow():
             self._display(message)
             self.window.getkey()
             self.window.clear()
+        self.window.refresh()
     
     ## PRIVATE METHODS ##
     def _display(self, message):
