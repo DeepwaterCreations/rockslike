@@ -52,7 +52,10 @@ def main(stdscr):
     debugoutput.init(stdscr)
 
     messagewindow, gamewindow = layout_windows(stdscr)
-    gameworld = GameWorld(genfunc=mapgenfuncs.load_from_file, mapfile=args.mapfile)
+    if args.mapfile:
+        gameworld = GameWorld(genfunc=mapgenfuncs.load_from_file, mapfile=args.mapfile)
+    else:
+        gameworld = GameWorld(genfunc=mapgenfuncs.empty_box, width=20, height=20)
 
     #GAME LOOP
     while True:
@@ -83,6 +86,7 @@ def get_args():
         Maps to try are in the maps/ subfolder, or make your own.
             """, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("mapfile",
+            nargs='?',
             help="Path to a text file describing a game map",
             type=argparse.FileType('r'))
     parser.add_argument("-D", "--debugging-output", help="Print debugging messages", action="store_true")
