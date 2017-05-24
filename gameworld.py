@@ -1,4 +1,3 @@
-import parsemap
 import entities
 import mapfeatures
 import keyinput
@@ -7,20 +6,22 @@ import events
 class GameWorld():
     """A class to hold the current state of the game world"""
 
-    def __init__(self, mapfile):
+    def __init__(self, genfunc, *args, **kwargs):
+        #genfunc: A function that generates a map and a list of entities
+        #See mapgenfuncs.py
+        world, map_entities = genfunc(self, *args, **kwargs)
+
         #World is represented by a 2d matrix of lists
         #Each coordinate in the matrix is a cell
         #The list for that cell holds game objects
         #that are located in that cell.
-        self._world, entities_partials = parsemap.parse_file(mapfile)
-
+        self._world = world
         self.width = len(self._world[0])
         self.height = len(self._world)
 
         #Entities are game objects that can see the map and that might move around.
-        self._entities = [partial(get_gameworld_cell=self.get) for partial in entities_partials]
+        self._entities = map_entities
         self._player = list(filter(lambda x: isinstance(x, entities.Player), self._entities))[0]
-
         #Listen for entity death and remove entity when it happens
         events.listen_to_event("on_entity_death", lambda e: self._entities.remove(e))
 
@@ -74,3 +75,4 @@ class GameWorld():
     def update_world(self):
         """Generate the results of a single turn"""
         pass
+

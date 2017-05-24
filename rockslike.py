@@ -6,6 +6,7 @@ import argparse
 
 import debugoutput
 import keyinput
+import mapgenfuncs
 from gameworld import GameWorld
 from messagewindow import MessageWindow
 
@@ -51,7 +52,7 @@ def main(stdscr):
     debugoutput.init(stdscr)
 
     messagewindow, gamewindow = layout_windows(stdscr)
-    gameworld = GameWorld(args.mapfile)
+    gameworld = GameWorld(genfunc=mapgenfuncs.load_from_file, mapfile=args.mapfile)
 
     #GAME LOOP
     while True:
