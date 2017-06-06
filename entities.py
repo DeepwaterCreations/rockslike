@@ -102,3 +102,17 @@ class ItemPickup(Entity):
             player.receive_item(item)
         self.die()
         return True
+
+class Signpost(Entity):
+    """An entity that displays a message when the player bumps into it"""
+
+    def __init__(self, message, *args, **kwargs):
+        super(Signpost, self).__init__(*args, **kwargs)
+
+        self.message = message
+        self.let_player_through = False
+
+    def player_collision(self, player):
+        """On player collision, display the message"""
+        events.trigger_event("print_message", self.message)
+        return self.let_player_through
