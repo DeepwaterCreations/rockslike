@@ -1,5 +1,4 @@
 """This module holds dungeon features and generally immobile stuff"""
-import curses
 from tile import Tile
 
 class MapFeature():
@@ -19,14 +18,14 @@ class Floor(MapFeature):
     """A tile the player can walk on"""
 
     def __init__(self, *args, **kwargs):
-        tile = Tile('.', foreground=curses.COLOR_GREEN, background=curses.COLOR_BLACK)
+        tile = Tile('.', foreground="GREEN", background="BLACK")
         super(Floor, self).__init__(tile, *args, **kwargs)
 
 class Wall(MapFeature):
     """A tile that blocks the player's movement"""
 
     def __init__(self, *args, **kwargs):
-        tile = Tile('#', foreground=curses.COLOR_MAGENTA, background=curses.COLOR_BLACK)
+        tile = Tile('#', foreground="MAGENTA", background="BLACK")
         super(Wall, self).__init__(tile, *args, **kwargs)
 
     def player_collision(self, player):

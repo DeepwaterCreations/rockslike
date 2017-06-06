@@ -5,6 +5,7 @@ import functools
 
 import mapfeatures
 import entities
+from tile import Tile
 
 __map_dict = {
         '.': mapfeatures.Floor,
@@ -21,6 +22,9 @@ def parse_file(map_file):
             classname - the name of a subclass of Entity that describes this entity
             x_coord - the x coordinate of the entity's position
             y_coord - the y coordinate of the entity's position
+            tilechar - the character to display for the object
+            fgcolor, bgcolor - strings describing the foreground and backgrounc color
+                of the tile
             args - (optional) a list of arguments to pass to the entity's constructor
             ksargs - (optional) a dict of keyword arguments to pass to the entity's constructor
     """
@@ -53,7 +57,12 @@ def __parse_entities(entities_text):
     for obj in json_entities:
         x_coord = int(obj['x_coord'])
         y_coord = int(obj['y_coord'])
+        fgcolor = obj['fgcolor'] if 'fgcolor' in obj else "WHITE"
+        bgcolor = obj['bgcolor'] if 'bgcolor' in obj else "BLACK"
+        tile = Tile(obj['tilechar'], fgcolor, bgcolor) if 'tilechar' in obj else None
         args = obj['args'] if 'args' in obj else []
+        if tile is not None:
+            args.append(tile)
         args.append(x_coord)
         args.append(y_coord)
         kwargs = obj['kwargs'] if 'kwargs' in obj else {}
@@ -61,4 +70,3 @@ def __parse_entities(entities_text):
         entity_partial = functools.partial(entity_class, *args, **kwargs)
         map_entities.append(entity_partial)
     return map_entities
-

@@ -1,6 +1,4 @@
 """This module holds creatures and stuff that moves around"""
-import curses
-
 import events
 from tile import Tile
 
@@ -30,7 +28,7 @@ class Player(Entity):
     """A player character"""
 
     def __init__(self, *args, **kwargs):
-        tile = Tile('@', foreground=curses.COLOR_WHITE, background=curses.COLOR_CYAN)
+        tile = Tile('@', foreground="WHITE", background="CYAN")
         super(Player, self).__init__(tile, *args, **kwargs)
 
         #A flag that might temporarily be set to false during the move step if something
@@ -93,7 +91,7 @@ class ItemPickup(Entity):
     """
 
     def __init__(self, items, *args, **kwargs):
-        tile = Tile('%', foreground=curses.COLOR_YELLOW, background=curses.COLOR_BLACK)
+        tile = Tile('%', foreground="YELLOW", background="BLACK")
         super(ItemPickup, self).__init__(tile, *args, **kwargs)
 
         self.inventory.extend(items)
