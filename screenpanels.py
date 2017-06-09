@@ -1,0 +1,120 @@
+"""A module for the panels that make up the game interface"""
+import collections
+import curses
+
+import events
+
+class TextPanel():
+    """Displays and formats text in a curses window"""
+
+    def __init__(self, window):
+        self.window = window
+        # self.more_messages_string = ""
+
+    def display():
+        """Called by the game loop. Should print appropriate text
+        inside the panel.
+        """
+        raise NotImplementedError
+    
+    ## PRIVATE METHODS ##
+    def _trim_message(self, message, more_indicator=None):
+        """Trims, wraps and truncates a message to a list of lines that fit in the window
+        
+        Returns a tuple. If the message is too long to fit in the window at once, the second
+        part of the tuple will be the remaining part of the message.
+        """
+        height, width = self.window.getmaxyx()
+        #Account for border
+        width -= 2
+        height -= 2
+
+        #Turn the message into an array of words, and reverse it so that
+        #we can consume from the end
+        message = message.split(' ')
+        message.reverse()
+
+        message_rows = collections.deque()
+        #Leave space for a "==MORE==" message if necessary
+        adjusted_height = height-1 if more_indicator is not None else height
+        #Break the message into lines
+        while len(message_rows) < (adjusted_height):
+            new_row = ""
+            while len(message) > 0:
+                #Put words into the current row's string
+                #Break if putting another word in would overflow the width
+                #Also break on a newline
+                if len(new_row) + 1 + len(message[-1]) < width:
+                    word = message.pop()
+                    words = word.split('\n', 1)
+                    new_row += " " + words[0]
+                    if len(words) > 1:
+                        for word in words[1:]:
+                            message.append(word)
+                        break
+                elif new_row == "":
+                    #Rather than choke forever on a string too long to print but too stubborn to die,
+                    #if we haven't added any words at all this iteration, break the first word into 
+                    #two words and try again.
+                    stupid_long_word = message.pop()
+                    first_part = stupid_long_word[:width-2] + '-'
+                    second_part = stupid_long_word[width-2:]
+                    message.append(second_part)
+                    message.append(first_part)
+                else:
+                    break
+            message_rows.append(new_row)
+
+        #We should now have an array of strings, each of which represents a row of text
+        #that will fit in the window. If there's any more of the message left, return it
+        #as the second part of the tuple.
+        remaining_text = None
+        if len(message) > 0:
+            message.reverse()
+            remaining_text = " ".join(message)
+
+        #Optionally put a message at the bottom of the window if there is more text
+        if more_indicator is not None and remaining_text is not None:
+            message_rows.append(more_indictaor.center(width-1))
+
+        return (message_rows, remaining_text)
+
+    def _display_message(self, message_rows):
+        """Print the text line by line into the window"""
+        y = 1 #Start at 1 to make room for the border
+        while len(message_rows) > 0:
+            self.window.addstr(y, 1, message_rows.popleft())
+            y += 1
+
+class MessagePanel(TextPanel):
+    """Displays game messages to the player"""
+
+    def __init__(self, window):
+        super(MessagePanel, self).__init__(window)
+        self._message_queue = collections.deque()
+        self.more_messages_string = "==MORE=="
+
+        events.listen_to_event("print_message", self.add_message)
+
+    def add_message(self, text):
+        """Add a message to be displayed next turn"""
+        self._message_queue.append(text)
+
+    def display(self):
+        """Display all messages in the queue in FIFO order, pausing to wait for keystrokes
+        after each one
+        """
+        #Can't use the 'for in' syntax, since we want to pop
+        while len(self._message_queue) > 0:
+            self.window.border()
+            message = self._message_queue.popleft()
+            message_rows, remaining = self._trim_message(message)
+            if remaining is not None:
+                #Put any text that didn't fit back on the queue, but
+                #it can go straight to the front, enjoying all the envious
+                #looks that the rest of the text gives it.
+                self._message_queue.appendleft(remaining)
+            self._display_message(message_rows)
+            self.window.getkey()
+            self.window.clear()
+        self.window.refresh()
