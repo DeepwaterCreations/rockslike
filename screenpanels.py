@@ -9,7 +9,9 @@ class TextPanel():
 
     def __init__(self, window):
         self.window = window
-        # self.more_messages_string = ""
+        #The height within the window where the next line
+        #of text should be drawn:
+        self.next_line = 1 #1 not 0, to account for window border
 
     def display():
         """Called by the game loop. Should print appropriate text
@@ -81,10 +83,14 @@ class TextPanel():
 
     def _display_message(self, message_rows):
         """Print the text line by line into the window"""
-        y = 1 #Start at 1 to make room for the border
         while len(message_rows) > 0:
-            self.window.addstr(y, 1, message_rows.popleft())
-            y += 1
+            self.window.addstr(self.next_line, 1, message_rows.popleft())
+            self.next_line += 1
+
+    def _reset_line_position(self):
+        """Move the next line back to the top of the window"""
+        self.next_line = 1
+
 
 class MessagePanel(TextPanel):
     """Displays game messages to the player"""
@@ -117,4 +123,5 @@ class MessagePanel(TextPanel):
             self._display_message(message_rows)
             self.window.getkey()
             self.window.clear()
+            self._reset_line_position()
         self.window.refresh()
