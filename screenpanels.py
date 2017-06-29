@@ -23,8 +23,9 @@ class TextPanel():
     def _trim_message(self, message, more_indicator=None):
         """Trims, wraps and truncates a message to a list of lines that fit in the window
         
-        Returns a tuple. If the message is too long to fit in the window at once, the second
-        part of the tuple will be the remaining part of the message.
+        Returns a tuple. The first part of the tuple is a deque of strings. If the message 
+        is too long to fit in the window at once, the second part of the tuple will be the 
+        remaining part of the message.
         """
         height, width = self.window.getmaxyx()
         #Account for border
@@ -40,7 +41,7 @@ class TextPanel():
         #Leave space for a "==MORE==" message if necessary
         adjusted_height = height-1 if more_indicator is not None else height
         #Break the message into lines
-        while len(message_rows) < (adjusted_height):
+        while len(message_rows) < (adjusted_height) and len(message) > 0:
             new_row = ""
             while len(message) > 0:
                 #Put words into the current row's string
@@ -140,26 +141,49 @@ class ListMenu(TextPanel):
         super(ListMenu, self).__init__(window)
         self.active = False
 
+        self.header = None
         self.menu_list = [] if menu_list is None else menu_list
+        self.footer = None
+
+        events.listen_to_event("print_list", self.set_list)
+
+    def set_list(self, new_list, header = None, footer=None):
+        self.menu_list = new_list
+        if header is not None and len(header) > 0:
+            self.header, _ = self._trim_message(header)
+        if footer is not None and len(footer) > 0:
+            self.footer, _ = self._trim_message(footer)
+        self.active = True
 
     def display(self):
         """Draw the list items to the screen"""
-        if self.active and len(self.menu_list > 0):
+        if self.active and len(self.menu_list) > 0:
+            self.window.border()
+            if self.header is not None:
+                self._display_message(self.header)
             for idx, option in enumerate(self.menu_list):
-                self._display_message("{0}. {1}".format(idx, option.text))
+                message = "{0}. {1}".format(idx, option.text)
+                message_rows, _ = self._trim_message(message)
+                self._display_message(message_rows)
+            if self.footer is not None:
+                self._display_message(self.footer)
             self.handle_key(self.window.getkey())
+            self._reset_line_position()
+            self.window.clear()
+            self.active = False
+            self.window.refresh()
 
     def handle_key(self, key):
         """Handle keyboard input for the menu"""
         number = None
         try:
             number = int(key)
-        except TypeError:
+        except ValueError:
             #If the key wasn't a number key, don't worry about it.
             pass
 
         if number is not None and 0 <= number < len(self.menu_list):
-            menu_list[number].action()
+            self.menu_list[number].action()
         elif key in ["q", "KEY_ESC"]:
             pass
         else:

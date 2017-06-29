@@ -1,6 +1,7 @@
 """This module holds creatures and stuff that moves around"""
 import events
 from tile import Tile
+from screenpanels import ListMenu
 
 class Entity():
     """A dynamic object on the map, such as a player or monster"""
@@ -75,12 +76,15 @@ class Player(Entity):
 
     def display_inventory(self):
         """Display a message listing the player's inventory"""
-        inventory_string = "Carrying:\n"
+        header = "Carrying:\n"
+        action_list = []
         for item in self.inventory:
-            inventory_string += item + '\n'
+            item_action = ListMenu.ListMenuItem(item, lambda *args: None) #Function does nothing
+            action_list.append(item_action)
         if len(self.inventory) == 0:
-            inventory_string += "Nothing at all!"
-        events.trigger_event("print_message", inventory_string)
+            item_action = ListMenu.ListMenuItem("Nothing at all", lambda *args: None) #Function does nothing
+            action_list.append(item_action)
+        events.trigger_event("print_list", action_list, header=header)
         
 
 class ItemPickup(Entity):
