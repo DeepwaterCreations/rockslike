@@ -86,6 +86,10 @@ def get_args():
          /|\        /|\\
         1 2 3      b j n
 
+        Commands:
+        i - list inventory
+        d - drop inventory
+
         Maps to try are in the maps/ subfolder, or make your own.
             """, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("mapfile",
