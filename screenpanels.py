@@ -147,8 +147,11 @@ class ListMenu(TextPanel):
 
         events.listen_to_event("print_list", self.set_list)
 
-    def set_list(self, new_list, header = None, footer=None):
-        self.menu_list = new_list
+    def set_list(self, text_action_pairs, header = None, footer=None):
+        """Wrap text and function pairs in ListMenuItems and set the current list
+        to a list of those items.
+        """
+        self.menu_list = [ListMenu.ListMenuItem(text, action) for text, action in text_action_pairs]
         if header is not None and len(header) > 0:
             self.header, _ = self._trim_message(header)
         if footer is not None and len(footer) > 0:
@@ -157,7 +160,7 @@ class ListMenu(TextPanel):
 
     def display(self):
         """Draw the list items to the screen"""
-        if self.active and len(self.menu_list) > 0:
+        if self.active:
             self.window.border()
             if self.header is not None:
                 self._display_message(self.header)
