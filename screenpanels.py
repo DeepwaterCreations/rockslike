@@ -125,3 +125,43 @@ class MessagePanel(TextPanel):
             self.window.clear()
             self._reset_line_position()
         self.window.refresh()
+
+class ListMenu(TextPanel):
+    """Displays a list of selectable options"""
+
+    class ListMenuItem():
+        """A selectable option in a ListMenu"""
+
+        def __init__(self, text, action):
+            self.text = text
+            self.action = action
+
+    def __init__(self, window, menu_list=None):
+        super(ListMenu, self).__init__(window)
+        self.active = False
+
+        self.menu_list = [] if menu_list is None else menu_list
+
+    def display(self):
+        """Draw the list items to the screen"""
+        if self.active and len(self.menu_list > 0):
+            for idx, option in enumerate(self.menu_list):
+                self._display_message("{0}. {1}".format(idx, option.text))
+            self.handle_key(self.window.getkey())
+
+    def handle_key(self, key):
+        """Handle keyboard input for the menu"""
+        number = None
+        try:
+            number = int(key)
+        except TypeError:
+            #If the key wasn't a number key, don't worry about it.
+            pass
+
+        if number is not None and 0 <= number < len(self.menu_list):
+            menu_list[number].action()
+        elif key in ["q", "KEY_ESC"]:
+            pass
+        else:
+            self.handle_key(self.window.getkey())
+

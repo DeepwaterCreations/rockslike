@@ -8,13 +8,14 @@ import debugoutput
 import keyinput
 import mapgenfuncs
 from gameworld import GameWorld
-from screenpanels import MessagePanel
+from screenpanels import MessagePanel, ListMenu
 
-def draw_screen(stdscr, gameworld, gamewindow, messagepanel, show_debug_text=False):
+def draw_screen(stdscr, gameworld, gamewindow, panellist, show_debug_text=False):
     """Display the current game state on the screen"""
 
-    #Print messages in the message panel, if any
-    messagepanel.display()
+    #Update non-game panels
+    for panel in panellist:
+        panel.display()
 
     #Draw the gameworld to its window
     window_height, window_width = gamewindow.getmaxyx()
@@ -31,16 +32,18 @@ def draw_screen(stdscr, gameworld, gamewindow, messagepanel, show_debug_text=Fal
 def layout_panels(stdscr):
     """Build panel layout and create sub-windows of stdscr
 
-    Return: A tuple of curses windows or game objects that manage them
+    Return: A tuple with the game window and a list of other panels
     """
     screen_width = curses.COLS-1
     screen_height = curses.LINES-1
     messagepanel_height = 5
+    gamewindow_width = 3 * (screen_width // 4)
     #Arguments for creating sub-windows are height, width, y coord of top, x coord of left
     #0,0 is top left corner of the screen
-    messagepanel = MessagePanel(stdscr.subwin(messagepanel_height, screen_width, 0, 0))
-    gamewindow = stdscr.subwin(screen_height-messagepanel_height, screen_width, messagepanel_height+1, 0)
-    return (messagepanel, gamewindow)
+    messagepanel = MessagePanel(stdscr.subwin(messagepanel_height, gamewindow_width, 0, 0))
+    gamewindow = stdscr.subwin(screen_height-messagepanel_height, gamewindow_width, messagepanel_height+1, 0)
+    menupanel = ListMenu(stdscr.subwin(screen_height, (screen_width // 4), 0, gamewindow_width+1))
+    return (gamewindow, [messagepanel, menupanel])
 
 def main(stdscr):
     #SETUP
@@ -51,7 +54,7 @@ def main(stdscr):
     show_debug_text = args.debugging_output
     debugoutput.init(stdscr)
 
-    messagepanel, gamewindow = layout_panels(stdscr)
+    gamewindow, panellist = layout_panels(stdscr)
     if args.mapfile:
         gameworld = GameWorld(genfunc=mapgenfuncs.load_from_file, mapfile=args.mapfile)
     else:
@@ -60,7 +63,7 @@ def main(stdscr):
     #GAME LOOP
     while True:
         try:
-            draw_screen(stdscr, gameworld, gamewindow, messagepanel, show_debug_text=show_debug_text)
+            draw_screen(stdscr, gameworld, gamewindow, panellist, show_debug_text=show_debug_text)
             keyinput.handle_key(stdscr.getkey())
             gameworld.update_world()
         except KeyboardInterrupt:
