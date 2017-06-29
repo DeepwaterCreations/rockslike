@@ -20,3 +20,5 @@ def handle_key(key):
         events.trigger_event("player_move", x_dir=1, y_dir=1)
     if key in ['i']:
         events.trigger_event("player_display_inventory")
+    if key in ['d']:
+        events.trigger_event("player_drop_inventory")

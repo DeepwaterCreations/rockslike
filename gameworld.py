@@ -24,6 +24,7 @@ class GameWorld():
         self._player = list(filter(lambda x: isinstance(x, entities.Player), self._entities))[0]
         #Listen for entity death and remove entity when it happens
         events.listen_to_event("on_entity_death", lambda e: self._entities.remove(e))
+        events.listen_to_event("world_add_entity", lambda e: self._entities.append(e))
 
     def get_view(self, view_width=None, view_height=None, origin=(None, None), center_on_player=False):
         """Returns a 2d matrix of the top tiles of a subset of the board"""

@@ -2,6 +2,8 @@
 import events
 from tile import Tile
 
+import functools
+
 class Entity():
     """A dynamic object on the map, such as a player or monster"""
 
@@ -38,6 +40,7 @@ class Player(Entity):
         events.listen_to_event("player_move", self.move)
         events.listen_to_event("player_should_stop", self.cancel_move)
         events.listen_to_event("player_display_inventory", self.display_inventory)
+        events.listen_to_event("player_drop_inventory", self.drop_inventory)
 
     def move(self, x_dir, y_dir):
         """Check the map and move the player in the given direction
@@ -82,6 +85,20 @@ class Player(Entity):
             header += "Nothing at all"
         events.trigger_event("print_list", action_list, header=header)
         
+    def drop_inventory(self):
+        """Present list of inventory items and drop the one selected on
+        the ground
+        """
+        header = "Choose item to drop:\n"
+        def drop(get_gameworld_cell, x, y, item):
+            item_entity = ItemPickup([item], x, y, get_gameworld_cell)
+            events.trigger_event("world_add_entity", item_entity)
+            self.inventory.remove(item)
+        action_list = [(item, functools.partial(drop, get_gameworld_cell=self.get_gameworld_cell, x=self.x, y=self.y, item=item)) for item in self.inventory]
+        if len(action_list) == 0:
+                header += "You hold nothing!"
+        events.trigger_event("print_list", action_list, header=header)
+
 
 class ItemPickup(Entity):
     """An item's presence in the world
