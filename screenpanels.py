@@ -85,7 +85,7 @@ class TextPanel():
     def _display_message(self, message_rows):
         """Print the text line by line into the window"""
         while len(message_rows) > 0:
-            self.window.addstr(self.next_line, 1, message_rows.popleft())
+            self.window.addstr(self.next_line, 1, message_rows.popleft(), curses.A_BOLD)
             self.next_line += 1
 
     def _reset_line_position(self):
