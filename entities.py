@@ -108,7 +108,7 @@ class ItemPickup(Entity):
     """
 
     def __init__(self, items, *args, **kwargs):
-        tile = Tile('%', foreground="YELLOW", background="BLACK")
+        tile = Tile('%', foreground="YELLOW", background="BLACK", bold=True)
         super(ItemPickup, self).__init__(tile, *args, **kwargs)
 
         self.inventory.extend(items)
