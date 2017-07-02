@@ -20,6 +20,7 @@
 #..................#
 ####################
 
+((ENTITIES))
 [
     {
        "classname": "Player",
@@ -30,7 +31,7 @@
         "classname": "ItemPickup",
         "x_coord": 3,
         "y_coord": 3,
-        "args": [["This is totally an item", "And this"]] 
+        "args": [["Fortune Cookie", "Raconteur's Hat"]] 
     },
     {
         "classname": "Signpost",

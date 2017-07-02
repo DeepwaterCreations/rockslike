@@ -4,8 +4,8 @@ from tile import Tile
 class MapFeature():
     """A static element of the map, such as a floor or wall tile"""
 
-    def __init__(self, tile):
-        self.tile = tile
+    def __init__(self, tilechar='?', fgcolor="BLACK", bgcolor="RED", bold=False):
+        self.tile = Tile(tilechar, fgcolor, bgcolor, bold)
 
     def player_collision(self, player):
         """Called when the player attempts to enter the same cell as this entity
@@ -17,16 +17,14 @@ class MapFeature():
 class Floor(MapFeature):
     """A tile the player can walk on"""
 
-    def __init__(self, *args, **kwargs):
-        tile = Tile('.', foreground="GREEN", background="BLACK")
-        super(Floor, self).__init__(tile, *args, **kwargs)
+    def __init__(self, tilechar='.', fgcolor="WHITE", bgcolor="BLACK", *args, **kwargs):
+        super(Floor, self).__init__(tilechar, fgcolor, bgcolor, *args, **kwargs)
 
 class Wall(MapFeature):
     """A tile that blocks the player's movement"""
 
-    def __init__(self, *args, **kwargs):
-        tile = Tile('#', foreground="MAGENTA", background="BLACK")
-        super(Wall, self).__init__(tile, *args, **kwargs)
+    def __init__(self, tilechar='#', fgcolor="WHITE", bgcolor="BLACK", *args, **kwargs):
+        super(Wall, self).__init__(tilechar, fgcolor, bgcolor, *args, **kwargs)
 
     def player_collision(self, player):
         return False #Stop the player from falling off the edge of the world
@@ -34,8 +32,8 @@ class Wall(MapFeature):
 class Void(MapFeature):
     """The un-tile. Represents the boundaries of the world map"""
 
-    def __init__(self, *args, **kwargs):
-        super(Void, self).__init__(None, *args, **kwargs)
+    def __init__(self, tilechar=' ', fgcolor="BLACK", bgcolor="BLACK", *args, **kwargs):
+        super(Void, self).__init__(tilechar, fgcolor, bgcolor, *args, **kwargs)
 
     def player_collision(self, player):
         return False #Stop the player from falling off the edge of the world

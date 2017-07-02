@@ -17,7 +17,16 @@ def parse_file(map_file):
     """Divide file into map features section and entities section
 
     Sections are delimited by blank lines
-    Map Features: An ASCII picture of the map
+    Map Art: An ASCII picture of the map
+    Map Features: A JSON object with coordinate pairs keyed to lists containing objects with these fields:
+            classname - the name of a subclass of MapFeature that should be generated for this tile
+            fgcolor, bgcolor - strings describing the foreground and background color of
+                the tile
+            args - a list of arguments to pass to the object's constructor
+            kwargs - a dict of keyword arguments to pass to the object's constructor
+        All of these fields are optional for MapFeatures. If omitted, they will
+        be inferred from the ASCII art. Additionally, MapFeatures displayed in the ASCII art will be
+        created even if there is no associated listing in the object.
     Entities: A JSON list of objects with these fields:
             classname - the name of a subclass of Entity that describes this entity
             x_coord - the x coordinate of the entity's position
@@ -28,23 +37,74 @@ def parse_file(map_file):
             args - (optional) a list of arguments to pass to the entity's constructor
             ksargs - (optional) a dict of keyword arguments to pass to the entity's constructor
     """
+    mapfeatures_delimiter = "((MAPFEATURES))"
+    entities_delimiter = "((ENTITIES))"
+
     map_text = map_file.read()
     map_text = map_text.strip()
     map_text = map_text.splitlines()
 
-    mapfeatures_end_index = map_text.index("") if "" in map_text else len(map_text)
-    mapfeatures_text = map_text[:mapfeatures_end_index]
-    entities_text = map_text[mapfeatures_end_index:]
+    #Break the file into its component chunks
+    mapart_end_index = map_text.index("") if "" in map_text else len(map_text)
+    mapart_text = map_text[:mapart_end_index]
+    json_text = map_text[mapart_end_index:]
+    
+    #TODO: Make this not suck
+    mapfeatures_start_index = json_text.index(mapfeatures_delimiter)+1 if mapfeatures_delimiter in json_text \
+            else None
+    entities_start_index = json_text.index(entities_delimiter)+1 if entities_delimiter in json_text \
+            else None
+    if mapfeatures_start_index is not None:
+        mapfeatures_end_index = entities_start_index-1 if entities_start_index > mapfeatures_start_index \
+                else len(json_text)
+        mapfeatures_text = json_text[mapfeatures_start_index:mapfeatures_end_index]
+    else:
+        mapfeatures_text = None
+    if entities_start_index is not None:
+        entities_end_index = mapfeatures_start_index-1 if mapfeatures_start_index > entities_start_index \
+                else len(json_text)
+        entities_text = json_text[entities_start_index:entities_end_index]
+    else:
+        entities_text = None
 
-    matrix = __parse_map_features(mapfeatures_text)
+    matrix = __parse_map_features(mapart_text, mapfeatures_text)
     map_entities = __parse_entities(entities_text)
     return (matrix, map_entities)
 
-def __parse_map_features(mapfeatures_text):
+def __parse_map_features(mapart_text, mapfeatures_text):
     """Read a description of a map from a file and generate a matrix of map features"""
     matrix = []
-    for line in mapfeatures_text:
-        parsed_line = [[__map_dict[feature]()] for feature in line.strip()]
+    if mapfeatures_text is not None:
+        mapfeatures_text = "".join(mapfeatures_text)
+        json_mapfeatures = json.loads(mapfeatures_text)
+    else:
+        json_mapfeatures = {}
+
+    for y, line in enumerate(mapart_text):
+        parsed_line = []
+        for x, cell in enumerate(line):
+            if "{0},{1}".format(x, y) in json_mapfeatures:
+                obj = json_mapfeatures["{0},{1}".format(x, y)]
+                if "classname" in obj:
+                    mapfeature_class = getattr(sys.modules["mapfeatures"], obj["classname"])
+                elif cell in __map_dict:
+                    mapfeature_class = __map_dict[cell]
+                else:
+                    mapfeature_class = mapfeatures.Void
+                tilechar = obj["tilechar"] if "tilechar" in obj else cell
+                args = obj["args"] if "args" in obj else []
+                args.append(tilechar)
+                if 'fgcolor' in obj:
+                    args.append(obj['fgcolor'])
+                if 'bgcolor' in obj:
+                    args.append(obj['bgcolor'])
+                if 'bold' in obj:
+                    args.append(obj['bold'])
+                kwargs = obj["kwargs"] if "kwargs" in obj else {}
+                feature = mapfeature_class(*args, **kwargs)
+            else:
+                feature = __map_dict[cell]() if cell in __map_dict else mapfeatures.Void()
+            parsed_line.append([feature])
         matrix.append(parsed_line)
     return matrix
 
