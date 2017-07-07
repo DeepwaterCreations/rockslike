@@ -49,23 +49,18 @@ def parse_file(map_file):
     mapart_text = map_text[:mapart_end_index]
     json_text = map_text[mapart_end_index:]
     
-    #TODO: Make this not suck
-    mapfeatures_start_index = json_text.index(mapfeatures_delimiter)+1 if mapfeatures_delimiter in json_text \
-            else None
-    entities_start_index = json_text.index(entities_delimiter)+1 if entities_delimiter in json_text \
-            else None
-    if mapfeatures_start_index is not None:
-        mapfeatures_end_index = entities_start_index-1 if entities_start_index > mapfeatures_start_index \
+    mapfeatures_text = None
+    entities_text = None
+    if mapfeatures_delimiter in json_text:
+        mapfeatures_start_index = json_text.index(mapfeatures_delimiter)+1
+        mapfeatures_end_index = json_text.index(entities_delimiter) if entities_delimiter in json_text \
                 else len(json_text)
         mapfeatures_text = json_text[mapfeatures_start_index:mapfeatures_end_index]
-    else:
-        mapfeatures_text = None
-    if entities_start_index is not None:
-        entities_end_index = mapfeatures_start_index-1 if mapfeatures_start_index > entities_start_index \
-                else len(json_text)
+
+    if entities_delimiter in json_text:
+        entities_start_index = json_text.index(entities_delimiter)+1
+        entities_end_index = len(json_text)
         entities_text = json_text[entities_start_index:entities_end_index]
-    else:
-        entities_text = None
 
     matrix = __parse_map_features(mapart_text, mapfeatures_text)
     map_entities = __parse_entities(entities_text)
@@ -109,7 +104,10 @@ def __parse_map_features(mapart_text, mapfeatures_text):
     return matrix
 
 def __parse_entities(entities_text):
-    """Build a list of callable game entity constructors from a list of JSON objects"""
+    """Build a list of callable game object constructors from a list of JSON objects"""
+    if entities_text is None:
+        return []
+
     entities_text = "".join(entities_text)
     json_entities = json.loads(entities_text)
 
