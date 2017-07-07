@@ -3,10 +3,11 @@ import entities
 import mapfeatures
 
 ### MAP GENERATION FUNCTIONS ###
-#Take a gameworld object plus other args, return world and map_entities,
-#where "world" is a 2d list of map features,
-#and "map_entities" is a list of Entity subclass objects, including
-#exactly one Player object.
+#Take a gameworld object plus other args, return mapfeatures, entities, and player_spawn,
+#where "mapfeatures" is a 2d list of map features,
+#"entities" is a list of Entity subclass objects,
+#and "player_spawn" is a set of x, y coordinates for the player's spawn location, presented
+#as a tuple.
 
 def load_from_file(gw, mapfile):
     """Parse mapfile and turn it into gameworld information"""
