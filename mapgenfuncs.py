@@ -12,7 +12,9 @@ def load_from_file(gw, mapfile):
     """Parse mapfile and turn it into gameworld information"""
     world, entities_partials = parsemap.parse_file(mapfile)
     map_entities = [partial(get_gameworld_cell=gw.get) for partial in entities_partials]
-    return world, map_entities
+    player = list(filter(lambda x: isinstance(x, entities.Player), map_entities))[0]
+    player_spawn = (player.x, player.y)
+    return world, map_entities, player_spawn
 
 def empty_box(gw, width, height):
     """Generate a big, empty box of floor with walls around it and put the player in the middle"""
@@ -24,8 +26,7 @@ def empty_box(gw, width, height):
         world.append(floor_row.copy())
     world.append([[mapfeatures.Wall()] for x in range(width+2)])
 
-    player = entities.Player(width//2, height//2, gw.get)
-    map_entities = [player]
+    map_entities = []
 
-    return world, map_entities
+    return world, map_entities, (width//2, height//2)
 

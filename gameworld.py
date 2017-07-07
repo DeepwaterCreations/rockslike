@@ -2,27 +2,20 @@ import entities
 import mapfeatures
 import keyinput
 import events
+import mapgenfuncs
 
 class GameWorld():
     """A class to hold the current state of the game world"""
 
-    def __init__(self, genfunc, *args, **kwargs):
-        #genfunc: A function that generates a map and a list of entities
-        #See mapgenfuncs.py
-        world, map_entities = genfunc(self, *args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        #self._mapfeatures is a 2d list that holds things like floors and walls
+        #self._entities is a list of dynamic objects, which store their own coordinates
 
-        #World is represented by a 2d matrix of lists
-        #Each coordinate in the matrix is a cell
-        #The list for that cell holds game objects
-        #that are located in that cell.
-        self._world = world
-        self.width = len(self._world[0])
-        self.height = len(self._world)
+        self.current_map_idx = 0
+        self.maplist = [GameMap(self, *args, **kwargs)]
+        self._player = entities.Player(*self.maplist[self.current_map_idx].player_spawn, self.get)
+        self.load_map(self.maplist[self.current_map_idx])
 
-        #Entities are game objects that can see the map and that might move around.
-        self._entities = map_entities
-        self._player = list(filter(lambda x: isinstance(x, entities.Player), self._entities))[0]
-        #Listen for entity death and remove entity when it happens
         events.listen_to_event("on_entity_death", lambda e: self._entities.remove(e))
         events.listen_to_event("world_add_entity", lambda e: self._entities.append(e))
 
@@ -55,7 +48,7 @@ class GameWorld():
         max_y = o_y + view_height
         flattened = [['' for x in range(view_width)] for y in range(view_height)]
         #Add map feature tiles
-        for y, row in enumerate(self._world[o_y:max_y]):
+        for y, row in enumerate(self._mapfeatures[o_y:max_y]):
             for x, cell in enumerate(row[o_x:max_x]):
                 flattened[y][x] = cell[len(cell) - 1].tile
         #add entity tiles
@@ -77,3 +70,34 @@ class GameWorld():
         """Generate the results of a single turn"""
         pass
 
+    def load_map(self, new_map):
+        """Set up a new map that the player has just entered"""
+        new_map.on_load()
+
+        self._entities = new_map._entities
+        self._entities.append(self._player)
+        self._player.x = new_map.player_spawn[0]
+        self._player.y = new_map.player_spawn[1]
+
+        self._mapfeatures = new_map._mapfeatures
+        self.width = len(self._mapfeatures[0])
+        self.height = len(self._mapfeatures)
+
+
+class GameMap():
+    """A class for a single map, a collection of which makes up a gameworld"""
+    def __init__(self, gameworld, genfunc, *args, **kwargs):
+        self.generate = genfunc
+        self._mapfeatures, self._entities, self.player_spawn = self.generate(gameworld, *args, **kwargs)
+
+    def generate(self, gameworld):
+        """Create the mapfeatures and entities for this map"""
+        raise NotImplementedError
+
+    def on_load(self):
+        """Called when this map becomes the current map"""
+        pass
+
+    def on_unload(self):
+        """Called when the player leaves the map"""
+        pass

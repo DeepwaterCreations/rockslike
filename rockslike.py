@@ -7,7 +7,7 @@ import argparse
 import debugoutput
 import keyinput
 import mapgenfuncs
-from gameworld import GameWorld
+from gameworld import GameWorld, GameMap
 from screenpanels import MessagePanel, ListMenu
 
 def draw_screen(stdscr, gameworld, gamewindow, panellist, show_debug_text=False):
@@ -56,9 +56,11 @@ def main(stdscr):
 
     gamewindow, panellist = layout_panels(stdscr)
     if args.mapfile:
-        gameworld = GameWorld(genfunc=mapgenfuncs.load_from_file, mapfile=args.mapfile)
+        gameworld = GameWorld(genfunc=mapgenfuncs.load_from_file,
+                              mapfile=args.mapfile)
     else:
-        gameworld = GameWorld(genfunc=mapgenfuncs.empty_box, width=20, height=20)
+        gameworld = GameWorld(genfunc=mapgenfuncs.empty_box, 
+                              width=20, height=20)
 
     #GAME LOOP
     while True:
