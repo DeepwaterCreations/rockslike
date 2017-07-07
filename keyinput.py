@@ -22,3 +22,5 @@ def handle_key(key):
         events.trigger_event("player_display_inventory")
     if key in ['d']:
         events.trigger_event("player_drop_inventory")
+    if key in ['>', '<']:
+        events.trigger_event("player_use_portal")

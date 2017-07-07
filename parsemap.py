@@ -10,7 +10,9 @@ from tile import Tile
 __map_dict = {
         '.': mapfeatures.Floor,
         '#': mapfeatures.Wall,
-        ' ': mapfeatures.Void
+        ' ': mapfeatures.Void,
+        '>': mapfeatures.StairsDown,
+        '<': mapfeatures.StairsUp
         }
 
 def parse_file(map_file):

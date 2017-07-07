@@ -3,6 +3,7 @@ import events
 from tile import Tile
 
 import functools
+import itertools
 
 class Entity():
     """A dynamic object on the map, such as a player or monster"""
@@ -41,6 +42,7 @@ class Player(Entity):
         events.listen_to_event("player_should_stop", self.cancel_move)
         events.listen_to_event("player_display_inventory", self.display_inventory)
         events.listen_to_event("player_drop_inventory", self.drop_inventory)
+        events.listen_to_event("player_use_portal", self.use_portal)
 
     def move(self, x_dir, y_dir):
         """Check the map and move the player in the given direction
@@ -53,8 +55,8 @@ class Player(Entity):
 
         #First we directly inform the contents of the next cell that a player is trying
         #to enter it - this way we can minimize the use of the event
-        next_cell = self.get_gameworld_cell(*next_coords)
-        for thingy in next_cell:
+        next_cell_features, next_cell_entities = self.get_gameworld_cell(*next_coords)
+        for thingy in itertools.chain(next_cell_features, next_cell_entities):
             self.should_move = thingy.player_collision(self)
 
         #Then we trigger an event for anyone not in the next cell who might care
@@ -98,6 +100,16 @@ class Player(Entity):
         if len(action_list) == 0:
                 header += "You hold nothing!"
         events.trigger_event("print_list", action_list, header=header)
+
+    def use_portal(self):
+        """Use a portal the player is standing on"""
+        cell_features, _ = self.get_gameworld_cell(self.x, self.y)
+        for feature in cell_features:
+            debugoutput.add_debug_string(repr(feature))
+            # if callable(hasattr(feature.__class__, "activate_portal")):
+            if hasattr(feature.__class__, "activate_portal"):
+                feature.activate_portal(self)
+                break
 
 
 class ItemPickup(Entity):

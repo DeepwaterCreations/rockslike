@@ -17,7 +17,11 @@ class GameWorld():
         self.load_map(self.maplist[self.current_map_idx])
 
         events.listen_to_event("on_entity_death", lambda e: self._entities.remove(e))
+        events.listen_to_event("world_remove_entity", lambda e: self._entities.remove(e))
         events.listen_to_event("world_add_entity", lambda e: self._entities.append(e))
+        events.listen_to_event("change_map", self.change_map)
+        events.listen_to_event("change_map_down", self.change_map_down)
+        events.listen_to_event("change_map_up", self.change_map_up)
 
     def get_view(self, view_width=None, view_height=None, origin=(None, None), center_on_player=False):
         """Returns a 2d matrix of the top tiles of a subset of the board"""
@@ -60,15 +64,42 @@ class GameWorld():
         return flattened
 
     def get(self, x, y):
-        """Returns the contents of the cell at x, y"""
+        """Returns the contents of the cell at x, y as a (mapfeatures, entities) tuple"""
         if (x < 0 or x > self.width-1) or (y < 0 or y > self.height-1):
-            return [mapfeatures.Void()]
+            return (mapfeatures.Void(), [])
         cell_entities = list(filter(lambda e: e.x == x and e.y == y, self._entities))
-        return self._world[y][x] + cell_entities
+        return (self._mapfeatures[y][x], cell_entities)
 
     def update_world(self):
         """Generate the results of a single turn"""
         pass
+
+    def change_map_down(self):
+        """Set the current map to the next map down. Generate
+        a new one if necessary.
+        """
+        self.change_map(self.current_map_idx + 1)
+
+    def change_map_up(self):
+        """Set the current map to the next map up, if we're not at the surface.  """
+        if self.current_map_idx > 0:
+            self.change_map(self.current_map_idx + 1)
+
+    def change_map(self, depth, *args, **kwargs):
+        """Unload the current map and load a new one"""
+        #Unload
+        self.maplist[self.current_map_idx].on_unload()
+        self.maplist[self.current_map_idx]._entities.remove(self._player)
+
+        #Generate new maps if necessary
+        while depth >= len(self.maplist):
+            new_map = GameMap(self, mapgenfuncs.empty_box, width=self.width, height=self.height)
+            self.maplist.append(new_map)
+
+        #Switch to the new map
+        self.current_map_idx = depth
+        self.load_map(self.maplist[self.current_map_idx])
+
 
     def load_map(self, new_map):
         """Set up a new map that the player has just entered"""
