@@ -105,7 +105,6 @@ class Player(Entity):
         """Use a portal the player is standing on"""
         cell_features, _ = self.get_gameworld_cell(self.x, self.y)
         for feature in cell_features:
-            debugoutput.add_debug_string(repr(feature))
             # if callable(hasattr(feature.__class__, "activate_portal")):
             if hasattr(feature.__class__, "activate_portal"):
                 feature.activate_portal(self)
