@@ -20,6 +20,10 @@ def parse_file(map_file):
 
     Sections are delimited by blank lines
     Map Art: An ASCII picture of the map
+    Map Details: A JSON object with metadata about the map
+            version - the parser version to use (not currently observed)
+            player_spawn_x - the x coordinate where the player should spawn in
+            player_spawn_y - the y coordinate where the player should spawn in
     Map Features: A JSON object with coordinate pairs keyed to lists containing objects with these fields:
             classname - the name of a subclass of MapFeature that should be generated for this tile
             fgcolor, bgcolor - strings describing the foreground and background color of
@@ -39,6 +43,7 @@ def parse_file(map_file):
             args - (optional) a list of arguments to pass to the entity's constructor
             ksargs - (optional) a dict of keyword arguments to pass to the entity's constructor
     """
+    mapdetails_delimiter = "((MAPDETAILS))"
     mapfeatures_delimiter = "((MAPFEATURES))"
     entities_delimiter = "((ENTITIES))"
 
@@ -51,8 +56,19 @@ def parse_file(map_file):
     mapart_text = map_text[:mapart_end_index]
     json_text = map_text[mapart_end_index:]
     
+    mapdetails_text = None
     mapfeatures_text = None
     entities_text = None
+    if mapdetails_delimiter in json_text:
+        mapdetails_start_index = json_text.index(mapdetails_delimiter)+1
+        if mapfeatures_delimiter in json_text:
+            mapdetails_end_index = json_text.index(mapfeatures_delimiter)
+        elif entities_delimiter in json_text:
+            mapdetails_end_index = json_text.index(entities_delimiter)
+        else:
+            mapdetails_end_index = len(json_text)
+        mapdetails_text = json_text[mapdetails_start_index:mapdetails_end_index]
+
     if mapfeatures_delimiter in json_text:
         mapfeatures_start_index = json_text.index(mapfeatures_delimiter)+1
         mapfeatures_end_index = json_text.index(entities_delimiter) if entities_delimiter in json_text \
@@ -64,9 +80,24 @@ def parse_file(map_file):
         entities_end_index = len(json_text)
         entities_text = json_text[entities_start_index:entities_end_index]
 
+    map_details = __parse_map_details(mapdetails_text)
     matrix = __parse_map_features(mapart_text, mapfeatures_text)
     map_entities = __parse_entities(entities_text)
-    return (matrix, map_entities)
+
+    if "player_spawn_x" in map_details and "player_spawn_y" in map_details:
+        player_spawn = (map_details["player_spawn_x"], map_details["player_spawn_y"])
+    else:
+        player_spawn = (0,0)
+    return (matrix, map_entities, player_spawn)
+
+def __parse_map_details(mapdetails_text):
+    """Read map metadata"""
+    if mapdetails_text is None:
+        return {}
+
+    mapdetails_text = "".join(mapdetails_text)
+    json_mapdetails = json.loads(mapdetails_text)
+    return json_mapdetails
 
 def __parse_map_features(mapart_text, mapfeatures_text):
     """Read a description of a map from a file and generate a matrix of map features"""

@@ -11,10 +11,10 @@ import mapfeatures
 
 def load_from_file(gw, mapfile):
     """Parse mapfile and turn it into gameworld information"""
-    world, entities_partials = parsemap.parse_file(mapfile)
+    world, entities_partials, player_spawn = parsemap.parse_file(mapfile)
     map_entities = [partial(get_gameworld_cell=gw.get) for partial in entities_partials]
-    player = list(filter(lambda x: isinstance(x, entities.Player), map_entities))[0]
-    player_spawn = (player.x, player.y)
+    # player = list(filter(lambda x: isinstance(x, entities.Player), map_entities))[0]
+    # player_spawn = (player.x, player.y)
     return world, map_entities, player_spawn
 
 def empty_box(gw, width, height):

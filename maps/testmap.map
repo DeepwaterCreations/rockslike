@@ -20,13 +20,16 @@
 #..................#
 ####################
 
+((MAPDETAILS))
+
+{
+    "version": 0,
+    "player_spawn_x": 1,
+    "player_spawn_y": 1
+}
+
 ((ENTITIES))
 [
-    {
-       "classname": "Player",
-        "x_coord": 1,
-        "y_coord": 1 
-    },
     {
         "classname": "ItemPickup",
         "x_coord": 3,
