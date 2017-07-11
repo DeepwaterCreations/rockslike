@@ -19,13 +19,13 @@ def load_from_file(gw, mapfile):
 
 def empty_box(gw, width, height):
     """Generate a big, empty box of floor with walls around it and put the player in the middle"""
-    world = [[[mapfeatures.Wall()] for x in range(width+2)]]
-    floor_row = [[mapfeatures.Wall()]]
-    floor_row += [[mapfeatures.Floor()] for x in range(width)]
-    floor_row += [[mapfeatures.Wall()]]
+    world = [[mapfeatures.Wall() for x in range(width)]]
+    floor_row = [mapfeatures.Wall()]
+    floor_row += [mapfeatures.Floor() for x in range(width-2)]
+    floor_row += [mapfeatures.Wall()]
     for y in range(height):
         world.append(floor_row.copy())
-    world.append([[mapfeatures.Wall()] for x in range(width+2)])
+    world.append([mapfeatures.Wall() for x in range(width)])
 
     map_entities = []
 

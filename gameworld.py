@@ -54,7 +54,7 @@ class GameWorld():
         #Add map feature tiles
         for y, row in enumerate(self._mapfeatures[o_y:max_y]):
             for x, cell in enumerate(row[o_x:max_x]):
-                flattened[y][x] = cell[len(cell) - 1].tile
+                flattened[y][x] = cell.tile
         #add entity tiles
         for entity in self._entities:
             if o_x <= entity.x < max_x and o_y <= entity.y < max_y:

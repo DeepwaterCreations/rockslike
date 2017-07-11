@@ -132,7 +132,7 @@ def __parse_map_features(mapart_text, mapfeatures_text):
                 feature = mapfeature_class(*args, **kwargs)
             else:
                 feature = __map_dict[cell]() if cell in __map_dict else mapfeatures.Void()
-            parsed_line.append([feature])
+            parsed_line.append(feature)
         matrix.append(parsed_line)
     return matrix
 

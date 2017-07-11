@@ -55,9 +55,10 @@ class Player(Entity):
 
         #First we directly inform the contents of the next cell that a player is trying
         #to enter it - this way we can minimize the use of the event
-        next_cell_features, next_cell_entities = self.get_gameworld_cell(*next_coords)
-        for thingy in itertools.chain(next_cell_features, next_cell_entities):
-            self.should_move = thingy.player_collision(self)
+        next_cell_feature, next_cell_entities = self.get_gameworld_cell(*next_coords)
+        thingies = next_cell_entities + [next_cell_feature]
+        for thingy in thingies:
+            self.should_move = (thingy.player_collision(self) and self.should_move)
 
         #Then we trigger an event for anyone not in the next cell who might care
         #If they stop us from moving, they should trigger "player_should_stop"
@@ -103,12 +104,12 @@ class Player(Entity):
 
     def use_portal(self):
         """Use a portal the player is standing on"""
-        cell_features, _ = self.get_gameworld_cell(self.x, self.y)
-        for feature in cell_features:
+        cell_feature, _ = self.get_gameworld_cell(self.x, self.y)
+        # for feature in cell_features:
             # if callable(hasattr(feature.__class__, "activate_portal")):
-            if hasattr(feature.__class__, "activate_portal"):
-                feature.activate_portal(self)
-                break
+        if hasattr(cell_feature.__class__, "activate_portal"):
+            cell_feature.activate_portal(self)
+            # break
 
 
 class ItemPickup(Entity):
