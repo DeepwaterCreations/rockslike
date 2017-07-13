@@ -93,7 +93,7 @@ class GameWorld():
 
         #Generate new maps if necessary
         while depth >= len(self.maplist):
-            new_map = GameMap(self, mapgenfuncs.empty_box, width=self.width, height=self.height)
+            new_map = self.create_new_map()
             self.maplist.append(new_map)
 
         #Switch to the new map
@@ -113,6 +113,10 @@ class GameWorld():
         self._mapfeatures = new_map._mapfeatures
         self.width = len(self._mapfeatures[0])
         self.height = len(self._mapfeatures)
+
+    def create_new_map(self):
+        """Return a new GameMap"""
+        return GameMap(self, mapgenfuncs.empty_box, width=self.width, height=self.height)
 
 
 class GameMap():
