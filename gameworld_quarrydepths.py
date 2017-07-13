@@ -3,6 +3,7 @@ import curses
 import random
 
 import mapgenfuncs
+import mapcomponents
 import debugoutput
 from gameworld import GameWorld, GameMap
 
@@ -28,7 +29,7 @@ class QuarryDepthsGameMap(GameMap):
 
         #First, build rooms and corridors.
         #Then, copy the rooms and corridors into mapfeatures and entities.
-        roomlist = bsp(mapgenfuncs.Room, self.width, self.height)
+        roomlist = bsp(mapcomponents.Room, self.width, self.height)
         for room in roomlist:
             mapfeatures = mapgenfuncs.union_mapfeatures(mapfeatures, room.mapfeatures, room.w_x, room.w_y)
             entities.extend(room.entities)
