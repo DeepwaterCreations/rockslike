@@ -116,14 +116,22 @@ class GameWorld():
 
 
 class GameMap():
-    """A class for a single map, a collection of which makes up a gameworld"""
+    """A class for a single map, a collection of which makes up a gameworld.
+    Subclasses should implement generate or else pass a genfunc to the constructor.
+    """
     def __init__(self, gameworld, genfunc, *args, **kwargs):
-        self.generate = genfunc
-        self._mapfeatures, self._entities, self.player_spawn = self.generate(gameworld, *args, **kwargs)
+        self.gameworld = gameworld
+        self._mapfeatures, self._entities, self.player_spawn = genfunc(gameworld, *args, **kwargs)
 
-    def generate(self, gameworld):
-        """Create the mapfeatures and entities for this map"""
-        raise NotImplementedError
+    #A reasonable pattern for subclasses is to implement this:
+    #
+    #def generate(self, *args, **kwargs):
+    #   #Generate mapfeatures, entities and player spawn coordinates here#
+    #   return mapfeatures, entities, player_spawn
+    #
+    #...then pass that into the superclass constructor as its genfunc:
+    #
+    #super(YourGameMapSubclass, self).__init__(gameworld=gameworld, genfunc=self.generate, etc...)
 
     def on_load(self):
         """Called when this map becomes the current map"""
