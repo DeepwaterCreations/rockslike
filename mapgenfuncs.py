@@ -31,3 +31,26 @@ def empty_box(gw, width, height):
 
     return world, map_entities, (width//2, height//2)
 
+
+def union_mapfeatures(a, b, x_offset, y_offset):
+    """Return a 2d list of mapfeatures from a and b, where b is offset by x_offset 
+    to the left, and by y_offset downward. All empty tiles are None.
+    """
+    a_width = len(a[0])
+    a_height = len(a)
+    b_width = len(b[0])
+    b_height = len(b)
+    new_mapfeatures = []
+    for y in range(min(0, y_offset), max(a_height, b_height+y_offset)):
+        row = []
+        for x in range(min(0, x_offset), max(a_width, b_width+x_offset)):
+            new_tile = None
+            if y < a_height and x < a_width:
+                new_tile = a[y][x]
+            if y_offset <= y < b_height+y_offset and x_offset <= x < b_width+x_offset:
+                b_x = x - x_offset
+                b_y = y - y_offset
+                new_tile = b[b_y][b_x]
+            row.append(new_tile)
+        new_mapfeatures.append(row)
+    return new_mapfeatures
