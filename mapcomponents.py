@@ -3,32 +3,15 @@ import random
 
 import mapfeatures
 
-class Room():
+class MapComponent():
 
-    def __init__(self, world_coordinates, width_range, height_range):
+    def __init__(self, world_coordinates, width, height):
         self.w_x, self.w_y = world_coordinates
-        self.width = random.randrange(*width_range)
-        self.height = random.randrange(*height_range)
+        self.width = width
+        self.height = height
 
-        self.mapfeatures = self.generate_room_mapfeatures()
-        self.entities = self.generate_room_entities()
-
-    def generate_room_mapfeatures(self):
-        wall_row = [mapfeatures.Wall() for x in range(self.width)]
-        floor_row = [mapfeatures.Wall()]
-        floor_row += [mapfeatures.Floor() for x in range(self.width-2)]
-        floor_row += [mapfeatures.Wall()]
-
-        roomfeatures = []
-        roomfeatures.append(wall_row.copy())
-        for y in range(self.height-1):
-            roomfeatures.append(floor_row.copy())
-        roomfeatures.append(wall_row.copy())
-
-        return roomfeatures
-
-    def generate_room_entities(self):
-        return []
+        self.mapfeatures = [[None for x in range(self.width)] for y in range(self.height)]
+        self.entities = []
 
     def do_tiles_overlap(self, other):
         """Return true if any tiles in other occupy the same world space as the tiles 
@@ -76,10 +59,10 @@ class Room():
         new_height = max((self.y+self.height), (other.y+other.height)) - min(self.y, other.y)
         new_x = min(self.x, other.x)
         new_y = min(self.y, other.y)
-        new_room = Room((new_x, new_y), (new_width, new_width+1), (new_height, new_height+1))
+        new_component = MapComponent((new_x, new_y), new_width, new_height)
 
         #Set the new mapfeatures to the union of both rooms' mapfeatures
-        new_room.mapfeatures = union_mapfeatures(self.mapfeatures, other.mapfeatures, x_offset, y_offset)
+        new_component.mapfeatures = union_mapfeatures(self.mapfeatures, other.mapfeatures, x_offset, y_offset)
 
         #Set the new entities to the union of both rooms' entities lists, and change the location
         #of the entities in other to match the offset
@@ -89,4 +72,48 @@ class Room():
             e.y += y_offset
         new_entities.extend(self.entities)
 
-        return new_room
+        return new_component
+
+class Room(MapComponent):
+
+    def __init__(self, world_coordinates, width_range, height_range, *args, **kwargs):
+        self.width = random.randrange(*width_range)
+        self.height = random.randrange(*height_range)
+        super(Room, self).__init__(world_coordinates, self.width, self.height, *args, **kwargs)
+
+        self.mapfeatures = self.generate_room_mapfeatures()
+        self.entities = self.generate_room_entities()
+
+    def generate_room_mapfeatures(self):
+        wall_row = [mapfeatures.Wall() for x in range(self.width)]
+        floor_row = [mapfeatures.Wall()]
+        floor_row += [mapfeatures.Floor() for x in range(self.width-2)]
+        floor_row += [mapfeatures.Wall()]
+
+        roomfeatures = []
+        roomfeatures.append(wall_row.copy())
+        for y in range(self.height-1):
+            roomfeatures.append(floor_row.copy())
+        roomfeatures.append(wall_row.copy())
+
+        return roomfeatures
+
+    def generate_room_entities(self):
+        return []
+
+class Corridor(MapComponent):
+
+    def __init__(self, start_coords, end_coords):
+        width = abs(start_coords[0] - end_coords[0])
+        height = abs(start_coords[1] - end_coords[1])
+        world_coords = (min(start_coords[0], end_coords[0]), min(start_coords[1], end_coords[1]))
+        super(Corridor, self).__init__(world_coords, width, height)
+
+        self.mapfeatures = self.generate_corridor_mapfeatures()
+        self.entities = self.generate_corridor_entities()
+
+    def generate_corridor_mapfeatures(self):
+        pass
+    
+    def generate_corridor_entities(self):
+        return []
