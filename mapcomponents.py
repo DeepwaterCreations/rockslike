@@ -111,19 +111,60 @@ class Corridor(MapComponent):
     """A hallway of floor tiles.
     start_coords - a tuple of x,y coordinates denoting one end of the corridor
     end_coords - a tuple of x,y coordinates denoting the other end of the corridor
+    start_vertical - If True, the corridor will try to move upward or downward before
+        it bends. If False, it will try to move left or right first. If None, it will start
+        in whichever direction is farther between the two points.
+    If start_coords and end_coords are not colinear, the corridor will bend in a Z or N shape
+    at a random point along its length.
     """
 
-    def __init__(self, start_coords, end_coords):
+    def __init__(self, start_coords, end_coords, start_vertical=None):
         width = abs(start_coords[0] - end_coords[0])
         height = abs(start_coords[1] - end_coords[1])
         world_coords = (min(start_coords[0], end_coords[0]), min(start_coords[1], end_coords[1]))
         super(Corridor, self).__init__(world_coords, width, height)
 
-        self.mapfeatures = self.generate_corridor_mapfeatures()
+        self.start_coords = start_coords
+        self.end_coords = end_coords
+
+        self.mapfeatures = self.generate_corridor_mapfeatures(start_vertical)
         self.entities = self.generate_corridor_entities()
 
-    def generate_corridor_mapfeatures(self):
-        pass
+    def generate_corridor_mapfeatures(self, start_vertical):
+        #Handle cases where endpoints are colinear
+        if self.start_coords[0] == self.end_coords[0]:
+            return [[mapfeatures.Floor() for tile in range(width)]]
+        if self.start_coords[1] == self.end_coords[1]:
+            return [[mapfeatures.Floor()] for row in range(height)]
+
+        #Otherwise, figure out where to bend
+        if start_vertical is None:
+            start_vertical = self.height > self.width
+
+        mapfeatures = [[None for tile in self.width] for row in range(self.height)]
+        if start_vertical:
+            bend_point = random.randrange(1, self.height-1)
+        else:
+            bend_point = random.randrange(1, self.width-1)
+
+        left_point, right_point = (self.start_point, self.end_point) if self.start_point[0] < self.end_point[0] \
+                else (self.end_point, self.start_point)
+        top_point, bottom_point = (self.start_point, self.end_point) if self.start_point[1] < self.end_point[1] \
+                else (self.end_point, self.start_point)
+
+        for y, row in enumerate(self.height):
+            for x, tile in enumerate(self.width):
+                if start_vertical and \
+                        (x == self.top_point[0] and y < bend_point or \
+                         x == self.bottom_point[0] and y > bend_point or \
+                         y == bend_point) \
+                    or not start_vertical and \
+                        (y == self.left_point[1] and x < bend_point or \
+                         y == self.right_point[1] and x > bend_point or \
+                         x == bend_point):
+                            mapfeatures[y][x] = mapfeatures.Floor()
+        return mapfeatures
+
     
     def generate_corridor_entities(self):
         return []
