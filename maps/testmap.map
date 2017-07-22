@@ -20,29 +20,27 @@
 #..................#
 ####################
 
-((MAPDETAILS))
-
 {
-    "version": 0,
-    "player_spawn_x": 1,
-    "player_spawn_y": 1
-}
-
-((ENTITIES))
-[
-    {
-        "classname": "ItemPickup",
-        "x_coord": 3,
-        "y_coord": 3,
-        "args": [["Fortune Cookie", "Raconteur's Hat"]] 
+    "mapdetails": {
+        "version": 0,
+        "player_spawn_x": 1,
+        "player_spawn_y": 1
     },
-    {
-        "classname": "Signpost",
-        "x_coord": 12,
-        "y_coord": 10,
-        "tilechar": "T",
-        "fgcolor": "GREEN",
-        "bgcolor": "BLACK",
-        "args": ["You have found a SIGN OF THE TIMES"]
-    }
-]
+    "entities": [
+        {
+            "classname": "ItemPickup",
+            "x_coord": 3,
+            "y_coord": 3,
+            "args": [["Fortune Cookie", "Raconteur's Hat"]] 
+        },
+        {
+            "classname": "Signpost",
+            "x_coord": 12,
+            "y_coord": 10,
+            "tilechar": "T",
+            "fgcolor": "GREEN",
+            "bgcolor": "BLACK",
+            "args": ["You have found a SIGN OF THE TIMES"]
+        }
+    ]
+}
