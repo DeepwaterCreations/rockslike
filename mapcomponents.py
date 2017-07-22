@@ -75,6 +75,12 @@ class MapComponent():
         return new_component
 
 class Room(MapComponent):
+    """A randomly-sized box of floor tiles surrounded with wall tiles.
+    world_coordinates - a tuple containing the x,y coordintates of the room's upperleft-most tile
+        in world-space.
+    width_range - a tuple containing the min and max+1 possible width values
+    height_range - a tuple containing the min and max+1 possible height values
+    """
 
     def __init__(self, world_coordinates, width_range, height_range, *args, **kwargs):
         self.width = random.randrange(*width_range)
@@ -102,6 +108,10 @@ class Room(MapComponent):
         return []
 
 class Corridor(MapComponent):
+    """A hallway of floor tiles.
+    start_coords - a tuple of x,y coordinates denoting one end of the corridor
+    end_coords - a tuple of x,y coordinates denoting the other end of the corridor
+    """
 
     def __init__(self, start_coords, end_coords):
         width = abs(start_coords[0] - end_coords[0])
