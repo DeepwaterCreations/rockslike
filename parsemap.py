@@ -1,4 +1,4 @@
-"""A module for generating map files from text input"""
+"""A module for generating map data from file input"""
 import sys
 import json
 import functools
